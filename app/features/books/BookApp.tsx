@@ -42,6 +42,7 @@ function BookScreen({ editorMode }: { editorMode: EntityEditorMode }) {
         module={state.module}
         itemLabel={state.itemLabel}
         storageReady={collection.storageReady}
+        storageFailed={collection.storageFailed}
         hasItems={collection.items.length > 0}
         sorting={sorting}
       >

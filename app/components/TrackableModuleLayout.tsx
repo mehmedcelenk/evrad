@@ -5,6 +5,7 @@ interface TrackableModuleLayoutProps {
   loading: boolean;
   hasItems: boolean;
   loadingState: ReactNode;
+  errorState?: ReactNode;
   emptyState: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
@@ -17,6 +18,7 @@ export function TrackableModuleLayout({
   loading,
   hasItems,
   loadingState,
+  errorState,
   emptyState,
   children,
   footer,
@@ -28,7 +30,7 @@ export function TrackableModuleLayout({
       <section className="module-screen">
         {header}
         {!loading ? toolbar : null}
-        {loading ? loadingState : hasItems ? <div className="trackable-list">{children}</div> : emptyState}
+        {loading ? loadingState : errorState ?? (hasItems ? <div className="trackable-list">{children}</div> : emptyState)}
         {footer}
       </section>
       {status}

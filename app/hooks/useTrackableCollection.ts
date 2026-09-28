@@ -16,6 +16,7 @@ export function useTrackableCollection<T extends TrackableEntity>({
 }) {
   const [items, setItems] = useState<T[]>([]);
   const [itemsReady, setItemsReady] = useState(false);
+  const [itemsFailed, setItemsFailed] = useState(false);
   const itemsRef = useRef(items);
   const committed = useRef(items);
   const completions = useCompletionState();
@@ -48,9 +49,10 @@ export function useTrackableCollection<T extends TrackableEntity>({
     repository.load().then((stored) => {
       if (!active) return;
       replaceItems(stored);
+      setItemsFailed(false);
       setItemsReady(true);
     }).catch(() => {
-      if (active) { setItemsReady(true); onStorageError(); }
+      if (active) { setItemsFailed(true); setItemsReady(true); onStorageError(); }
     });
     return () => { active = false; };
   }, [onStorageError, replaceItems, repository]);
@@ -61,6 +63,7 @@ export function useTrackableCollection<T extends TrackableEntity>({
     toggleComplete: (id: string) => void completions.toggle(repository.moduleId, id),
     forgetItemState: forgetExpanded,
     storageReady: itemsReady && completions.ready,
+    storageFailed: itemsFailed || completions.failed,
     sorting,
   };
 }

@@ -48,13 +48,14 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
     <TrackableModuleLayout
       header={<ModuleScreenHeader title={t(labels.title)} eyebrow={t(labels.eyebrow)} tagline={t(labels.tagline)} filters={<RecordFilters filters={filters} />} />}
       loading={!state.ready}
-      hasItems={state.failed || state.entries.length > 0}
+      hasItems={state.entries.length > 0}
       loadingState={<StorageLoading label={t("loading.generic", { module: t(labels.title) })} />}
+      errorState={state.failed ? <p role="alert">{t("toast.storageError")}</p> : undefined}
       emptyState={<TrackableEmptyState title={t(labels.empty)} body={t(labels.body)} actionLabel={t("menu.discover")} actionHref={getSectionRoute("discover")} />}
       status={<SortStatus active={Boolean(state.sorting.draggingId)} announcement={state.sorting.announcement} activeLabel={t("card.sorting")} />}
       footer={<p className="quiet-note">{t("app.lightNote")}</p>}
     >
-      {state.failed ? <p role="alert">{t("toast.storageError")}</p> : visible.length ? visible.map((entry) => (
+      {visible.length ? visible.map((entry) => (
         <DevotionalCard key={entry.id} cardId={entry.id} collection={collection}
           moduleId={entry.moduleId} item={entry.item} complete={state.completeKeys.has(entry.id)}
           expanded={state.expansion.expandedIds.has(entry.id)} dragging={state.sorting.draggingId === entry.id}

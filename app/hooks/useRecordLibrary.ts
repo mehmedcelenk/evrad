@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { belongsToCollection, collectionEntry, recordKey, type CollectionEntry, type CollectionId, type RecordRef } from "../core/collections";
+import { belongsToCollection, collectionEntry, orderPatch, recordKey, type CollectionEntry, type CollectionId, type RecordRef } from "../core/collections";
 import { devotionalFromDraft } from "../core/devotional";
 import type { DevotionalDraft, DevotionalItem, EntityTemplate } from "../core/types";
 import { collectionRepository } from "../data/collection-repository";
@@ -88,9 +88,16 @@ export function useRecordLibraryState(onError: () => void) {
     });
     const saveOrder = (next: CollectionEntry[], collection: CollectionId) => mutate(async () => {
       await collectionRepository.saveOrder(next, collection);
-      await reload();
+      const orderById = new Map(next.map((entry) => [entry.id, entry.sortOrder]));
+      replaceEntries(entriesRef.current.map((entry) => {
+        const sortOrder = orderById.get(entry.id);
+        return sortOrder === undefined ? entry : {
+          ...entry,
+          item: { ...entry.item, ...orderPatch(collection, sortOrder) },
+        };
+      }));
     });
 
     return { entries, ready, failed, update, toggleMembership, create, saveOrder };
-  }, [entries, ready, failed, mutate, publish, reload]);
+  }, [entries, ready, failed, mutate, publish, replaceEntries]);
 }

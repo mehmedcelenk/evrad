@@ -61,7 +61,8 @@
   min-height: 3rem;
   opacity: 0.42;
   cursor: grab;
-  touch-action: none;
+  /* Horizontal gestures belong to the page pager; vertical long-press movement sorts. */
+  touch-action: pan-x;
 }
 .is-sorting .drag-handle { cursor: grabbing; opacity: 0.7; }
 .drag-handle i { display: block; width: 0.85rem; height: 1px; background: var(--muted); pointer-events: none; }

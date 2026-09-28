@@ -49,7 +49,7 @@ export function useLibraryModule<T extends TrackableEntity, Draft>({
   const editor = useEntityEditorRoute({
     mode: editorMode,
     items: collection.items,
-    storageReady: collection.storageReady,
+    storageReady: collection.storageReady && !collection.storageFailed,
     onMissing: handleMissing,
   });
 

@@ -11,6 +11,7 @@ export function LibraryModuleLayout({
   module,
   itemLabel,
   storageReady,
+  storageFailed,
   hasItems,
   sorting,
   toolbar,
@@ -19,6 +20,7 @@ export function LibraryModuleLayout({
   module: TrackableModuleDefinition;
   itemLabel: string;
   storageReady: boolean;
+  storageFailed: boolean;
   hasItems: boolean;
   sorting: { draggingId: string | null; announcement: string };
   toolbar?: ReactNode;
@@ -31,6 +33,7 @@ export function LibraryModuleLayout({
       loading={!storageReady}
       hasItems={hasItems}
       loadingState={<StorageLoading label={t("loading.generic", { module: title })} />}
+      errorState={storageFailed ? <p role="alert">{t("toast.storageError")}</p> : undefined}
       emptyState={<TrackableEmptyState title={t("empty.libraryTitle")} body={t("empty.libraryBody", { item: itemLabel })} actionLabel={t("empty.discover", { item: itemLabel })} actionHref={module.discoverRoute} />}
       status={<SortStatus active={Boolean(sorting.draggingId)} announcement={sorting.announcement} activeLabel={t("card.sorting")} />}
       footer={<p className="quiet-note">{t("app.lightNote")}</p>}

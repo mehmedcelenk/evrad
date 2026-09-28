@@ -26,6 +26,18 @@
 }
 .accordion[data-open="true"] > .accordion-inner { opacity: 1; transform: none; }
 
+/* The pager owns only distance; this shared motion layer owns its visual language. */
+.main-swipe-page {
+  opacity: calc(1 - var(--page-dist, 0) * 0.45);
+  filter: blur(calc(var(--page-dist, 0) * 3px));
+  transform: translateZ(0) scale(calc(1 - var(--page-dist, 0) * 0.025));
+  transform-origin: center top;
+  backface-visibility: hidden;
+}
+.main-swipe-viewport[data-moving="true"] .main-swipe-page {
+  will-change: opacity, filter, transform;
+}
+
 .dialog-layer[open] { animation: fadeIn var(--motion-fast) var(--ease-standard); }
 .dialog-layer[open] .dialog-surface { animation: surfaceIn var(--motion-normal) var(--ease-out); }
 .dialog-layer[open]::backdrop { animation: fadeIn var(--motion-fast) var(--ease-standard); }
@@ -56,5 +68,5 @@
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
   }
-  .main-swipe-page { opacity: 1 !important; transform: none !important; }
+  .main-swipe-page { opacity: 1 !important; filter: none !important; transform: none !important; }
 }

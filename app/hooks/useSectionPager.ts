@@ -15,7 +15,6 @@ export function useSectionPager(initialSection: MainSection) {
     const pages = Array.from(viewport.children) as HTMLElement[];
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let active = initial.current;
-    let target: MainSection | null = null;
     let frame = 0;
     let idle = 0;
     let moving = false;
@@ -26,6 +25,11 @@ export function useSectionPager(initialSection: MainSection) {
       const page = pages[indexOf(active)];
       if (page.offsetHeight) viewport.style.height = `${page.offsetHeight}px`;
     };
+    const setMoving = (next: boolean) => {
+      moving = next;
+      viewport.dataset.moving = String(next);
+      if (next) viewport.style.height = "";
+    };
     const publish = (section: MainSection) => {
       if (active === section) return;
       active = section;
@@ -35,16 +39,15 @@ export function useSectionPager(initialSection: MainSection) {
     const paint = () => {
       frame = 0;
       const position = viewport.scrollLeft / (width || 1);
+      // Keep active/inert stable mid-gesture; WebKit can cancel a touch whose origin becomes inert.
       pages.forEach((page, index) => {
         const distance = reducedMotion.matches ? 0 : Math.min(1, Math.abs(position - index));
         page.style.setProperty("--page-dist", distance.toFixed(3));
       });
-      if (!target) publish(sectionAtScroll());
     };
     const settle = () => {
       window.clearTimeout(idle);
-      target = null;
-      moving = false;
+      setMoving(false);
       publish(sectionAtScroll());
       paint();
       height();
@@ -52,7 +55,7 @@ export function useSectionPager(initialSection: MainSection) {
       if (window.location.pathname !== route) window.history.replaceState(window.history.state, "", route);
     };
     const scroll = () => {
-      if (!moving) { moving = true; viewport.style.height = ""; }
+      if (!moving) setMoving(true);
       if (!frame) frame = requestAnimationFrame(paint);
       window.clearTimeout(idle);
       // Fallback for WebKit versions without scrollend; never assumes a fixed
@@ -61,11 +64,8 @@ export function useSectionPager(initialSection: MainSection) {
     };
     navigate.current = (section, smooth = true) => {
       window.clearTimeout(idle);
-      target = section;
       window.scrollTo({ top: 0, behavior: "instant" });
-      publish(section);
-      moving = true;
-      viewport.style.height = "";
+      setMoving(true);
       const left = indexOf(section) * width;
       if (!smooth || reducedMotion.matches || Math.abs(left - viewport.scrollLeft) < 1) {
         viewport.scrollTo({ left, behavior: "instant" });
@@ -74,7 +74,6 @@ export function useSectionPager(initialSection: MainSection) {
         viewport.scrollTo({ left, behavior: "smooth" });
       }
     };
-    const interrupt = () => { target = null; };
     const popstate = () => {
       const section = mainSections.find((item) => item.route === window.location.pathname);
       if (section) navigate.current(section.id, false);
@@ -88,13 +87,12 @@ export function useSectionPager(initialSection: MainSection) {
       if (!moving) height();
     });
     viewport.scrollLeft = indexOf(active) * width;
+    viewport.dataset.moving = "false";
     paint();
     height();
     pages.forEach((page) => resize.observe(page));
     viewport.addEventListener("scroll", scroll, { passive: true });
     viewport.addEventListener("scrollend", settle);
-    viewport.addEventListener("touchstart", interrupt, { passive: true });
-    viewport.addEventListener("wheel", interrupt, { passive: true });
     window.addEventListener("popstate", popstate);
     reducedMotion.addEventListener("change", paint);
     return () => {
@@ -103,8 +101,6 @@ export function useSectionPager(initialSection: MainSection) {
       resize.disconnect();
       viewport.removeEventListener("scroll", scroll);
       viewport.removeEventListener("scrollend", settle);
-      viewport.removeEventListener("touchstart", interrupt);
-      viewport.removeEventListener("wheel", interrupt);
       window.removeEventListener("popstate", popstate);
       reducedMotion.removeEventListener("change", paint);
     };
