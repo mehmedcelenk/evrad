@@ -68,7 +68,7 @@ export function DiscoveryScreen() {
       )}
       {!library.failed && !visible.length ? (
         <p className="filter-empty">
-          {searchQuery.trim() ? t("discover.searchEmpty") : t("filter.empty")}
+          {t("empty.simple")}
         </p>
       ) : null}
     </TrackableModuleLayout>

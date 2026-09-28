@@ -102,9 +102,9 @@
   justify-content: center;
   height: 1.2rem;
   padding: 0 0.55rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 9999px;
-  background: var(--surface, #101216);
+  border: 1px solid var(--line);
+  border-radius: 0.32rem;
+  background: var(--surface-elevated);
   color: var(--muted);
   font-size: 0.62rem;
   font-weight: 650;
@@ -215,16 +215,9 @@
 .is-complete .completion-core::after { animation: haloBloom var(--motion-slow) var(--ease-out); }
 
 .empty-state {
-  display: grid;
-  place-items: center;
-  min-height: 23rem;
-  padding: 3rem 1.5rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: linear-gradient(145deg, rgba(22, 24, 29, 0.8), rgba(12, 14, 17, 0.88));
+  margin: 3rem 0;
+  color: var(--muted);
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: 0.95rem;
   text-align: center;
 }
-
-.empty-light { width: 3rem; aspect-ratio: 1; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 2.5rem rgba(255, 250, 220, 0.12); }
-.empty-state h2 { margin: 0.2rem 0 0; font-family: Iowan Old Style, Baskerville, Georgia, serif; font-size: 1.6rem; font-weight: 450; }
-.empty-state p { max-width: 19rem; margin: -0.4rem 0 0; color: var(--muted); font-size: 0.9rem; line-height: 1.6; }

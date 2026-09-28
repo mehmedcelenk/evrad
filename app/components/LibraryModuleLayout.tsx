@@ -9,7 +9,6 @@ import { TrackableModuleLayout } from "./TrackableModuleLayout";
 
 export function LibraryModuleLayout({
   module,
-  itemLabel,
   storageReady,
   storageFailed,
   hasItems,
@@ -18,7 +17,6 @@ export function LibraryModuleLayout({
   children,
 }: {
   module: TrackableModuleDefinition;
-  itemLabel: string;
   storageReady: boolean;
   storageFailed: boolean;
   hasItems: boolean;
@@ -34,7 +32,7 @@ export function LibraryModuleLayout({
       hasItems={hasItems}
       loadingState={<StorageLoading label={t("loading.generic", { module: title })} />}
       errorState={storageFailed ? <p role="alert">{t("toast.storageError")}</p> : undefined}
-      emptyState={<TrackableEmptyState title={t("empty.libraryTitle")} body={t("empty.libraryBody", { item: itemLabel })} actionLabel={t("empty.discover", { item: itemLabel })} actionHref={module.discoverRoute} />}
+      emptyState={<TrackableEmptyState />}
       status={<SortStatus active={Boolean(sorting.draggingId)} announcement={sorting.announcement} activeLabel={t("card.sorting")} />}
       footer={<p className="quiet-note">{t("app.lightNote")}</p>}
     >

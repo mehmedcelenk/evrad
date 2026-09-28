@@ -10,7 +10,6 @@ import { TrackableEmptyState } from "../../components/TrackableEmptyState";
 import { TrackableModuleLayout } from "../../components/TrackableModuleLayout";
 import type { CollectionEntry, CollectionId } from "../../core/collections";
 import { t } from "../../core/i18n";
-import { getSectionRoute } from "../../core/module-registry";
 import { getDefaultRecordCategory } from "../../core/record-categories";
 import type { ArabicFontLevel, DevotionalDraft } from "../../core/types";
 import { useCollection } from "../../hooks/useCollection";
@@ -20,8 +19,8 @@ import { DevotionalEditor } from "../devotional/DevotionalEditor";
 import { devotionalContentFromDraft } from "../../core/devotional";
 
 const copy = {
-  virds: { title: "module.dhikr.title", eyebrow: "module.dhikr.eyebrow", tagline: "module.dhikr.tagline", empty: "virds.empty", body: "virds.emptyBody" },
-  favorites: { title: "module.bag.title", eyebrow: "module.bag.eyebrow", tagline: "module.bag.tagline", empty: "empty.libraryTitle", body: "favorites.emptyBody" },
+  virds: { title: "module.dhikr.title", eyebrow: "module.dhikr.eyebrow", tagline: "module.dhikr.tagline" },
+  favorites: { title: "module.bag.title", eyebrow: "module.bag.eyebrow", tagline: "module.bag.tagline" },
 } as const;
 
 export function CollectionScreen({ collection }: { collection: CollectionId }) {
@@ -51,7 +50,7 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
       hasItems={state.entries.length > 0}
       loadingState={<StorageLoading label={t("loading.generic", { module: t(labels.title) })} />}
       errorState={state.failed ? <p role="alert">{t("toast.storageError")}</p> : undefined}
-      emptyState={<TrackableEmptyState title={t(labels.empty)} body={t(labels.body)} actionLabel={t("menu.discover")} actionHref={getSectionRoute("discover")} />}
+      emptyState={<TrackableEmptyState />}
       status={<SortStatus active={Boolean(state.sorting.draggingId)} announcement={state.sorting.announcement} activeLabel={t("card.sorting")} />}
       footer={<p className="quiet-note">{t("app.lightNote")}</p>}
     >
@@ -66,7 +65,7 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
           onRemoveFromCollections={() => collection === "favorites" ? void state.update(entry, { liked: false }) : setRemoveTarget(entry)}
           inVirds={Boolean(entry.item.inVirds)} onToggleVird={() => void state.toggleMembership(entry, "virds")}
           sortHandleProps={state.sorting.handleProps} />
-      )) : <p className="filter-empty">{t("filter.empty")}</p>}
+      )) : <p className="filter-empty">{t("empty.simple")}</p>}
     </TrackableModuleLayout>
     {editTarget ? <DevotionalEditor key={editTarget.id} item={editTarget.item} itemLabel={t("bag.record")}
       defaultCategory={getDefaultRecordCategory(editTarget.item, editTarget.moduleId)}

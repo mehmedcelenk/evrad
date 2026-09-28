@@ -11,7 +11,7 @@ import { SettingsScreen } from "../features/settings/SettingsScreen";
 import { useSectionPager } from "../hooks/useSectionPager";
 
 export function MainSectionsView({ initialSection }: { initialSection: NavigationTarget }) {
-  const { viewportRef, activeSection, selectSection } = useSectionPager(initialSection === "create" ? "virds" : initialSection);
+  const { viewportRef, activeSection, navigationSection, selectSection } = useSectionPager(initialSection === "create" ? "virds" : initialSection);
   const [createDraft, setCreateDraft] = useState<DevotionalDraft | null | undefined>(initialSection === "create" ? null : undefined);
   const [previousInitial, setPreviousInitial] = useState(initialSection);
   if (previousInitial !== initialSection) {
@@ -28,7 +28,7 @@ export function MainSectionsView({ initialSection }: { initialSection: Navigatio
     selectSection(activeSection, false);
   };
 
-  return <AppShell section={createDraft !== undefined ? "create" : activeSection}
+  return <AppShell section={createDraft !== undefined ? "create" : navigationSection}
     onSelectSection={(section) => { if (section !== "create") selectSection(section); }}
     onOpenDetailed={setCreateDraft}>
     <div ref={viewportRef} className="main-swipe-viewport">

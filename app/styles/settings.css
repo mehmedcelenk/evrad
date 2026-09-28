@@ -199,12 +199,3 @@
 .settings-contact-link:hover, .settings-contact-link:focus-visible {
   color: var(--light-warm); text-decoration: underline;
 }
-
-.footer-nav-row { display: flex; align-items: center; justify-content: center; gap: 0.85rem; margin-bottom: 0.45rem; }
-.footer-settings-button {
-  display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center;
-  gap: 0.45rem; padding: 0 0.9rem; border: 0; border-radius: 0.55rem; background: transparent;
-  color: var(--muted-deep); text-decoration: none; font-size: 0.72rem; cursor: pointer;
-  transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard);
-}
-.footer-settings-button:hover, .footer-settings-button:focus-visible { color: var(--text-soft); background: rgba(255, 255, 255, 0.035); }

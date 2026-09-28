@@ -58,7 +58,6 @@ export function AppShell({
             label={t("backup.save")}
             saving={backup.saving}
             onBackup={() => void backup.exportBackup()}
-            onSelectSettings={onSelectSection ? () => onSelectSection("settings") : undefined}
           />
           <BottomNavigation
             section={section}
