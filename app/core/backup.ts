@@ -1,6 +1,8 @@
 import type { BookItem, DailyCompletion, DevotionalItem } from "./types";
 
 export interface BackupPayload {
+  readerStates?: import("./reader").ReaderState[];
+  readerSettings?: { id: string; bookId: string }[];
   entities: {
     dhikr: DevotionalItem[];
     prayers: DevotionalItem[];

@@ -25,6 +25,6 @@ function RecordEditScreen({ moduleId, itemId }: { moduleId: DevotionalModuleId; 
     if (!saved) throw new Error("Record could not be saved");
   };
   if (!library.ready) return <StorageLoading label={t("loading.generic", { module: t("bag.record") })} />;
-  if (!entry || library.failed) return <section className="module-screen"><p role="alert">{t(library.failed ? "toast.storageError" : "editor.notFoundGeneric", { item: t("bag.record") })}</p><button className="secondary-button" onClick={close}>{t("action.cancel")}</button></section>;
+  if (!entry || entry.moduleId === "books" || library.failed) return <section className="module-screen"><p role="alert">{t(library.failed ? "toast.storageError" : "editor.notFoundGeneric", { item: t("bag.record") })}</p><button className="secondary-button" onClick={close}>{t("action.cancel")}</button></section>;
   return <DevotionalEditor item={entry.item} itemLabel={t("bag.record")} defaultCategory={getDefaultRecordCategory(entry.item, moduleId)} onClose={close} onSave={save} />;
 }

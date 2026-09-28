@@ -4,6 +4,7 @@ import type { BookDraft, BookItem } from "../../core/types";
 
 export function bookFromDraft(draft: BookDraft, existing: BookItem | null, sortOrder: number): BookItem {
   return {
+    ...existing,
     ...createEntityMeta("book", sortOrder, existing),
     title: draft.title,
     author: draft.author || null,

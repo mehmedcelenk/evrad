@@ -34,10 +34,10 @@ before(async () => {
 });
 
 test("upgrade preserves pre-v5 records, order, history and explicit membership", async () => {
-  assert.equal((await openDatabase()).version, 8);
+  assert.equal((await openDatabase()).version, 9);
   const backup = await readBackupPayload();
   const dhikr = backup.entities.dhikr[0];
-  assert.equal(dhikr.name, legacy.name);
+  assert.equal("name" in dhikr && dhikr.name, legacy.name);
   assert.equal(dhikr.createdAt, legacy.createdAt);
   assert.equal(dhikr.sortOrder, 17);
   assert.equal(dhikr.virdSortOrder, 17);
@@ -61,7 +61,7 @@ test("heart and plus are independent and never replace customized content", asyn
   assert.equal(added.liked, false);
   await collectionRepository.patch(target, { name: "My title" });
   const liked = await collectionRepository.setMembership(target, "favorites", true, template);
-  assert.equal(liked.name, "My title");
+  assert.equal("name" in liked && liked.name, "My title");
   assert.equal(liked.inVirds, true);
   await completionRepository.set("dhikr", template.id, "2026-09-22", true);
   const unliked = await collectionRepository.setMembership(target, "favorites", false);
@@ -75,7 +75,7 @@ test("cross-store order changes preserve content and the other collection order"
   const dhikr = entries.find((entry) => entry.id === "dhikr:same-id")!.item;
   assert.equal(dhikr.virdSortOrder, 1);
   assert.equal(dhikr.sortOrder, 17);
-  assert.equal(dhikr.name, legacy.name);
+  assert.equal("name" in dhikr && dhikr.name, legacy.name);
   const snapshot = await readBackupPayload();
   await assert.rejects(collectionRepository.saveOrder([ref, { moduleId: "poetry", itemId: "missing" }], "favorites"));
   assert.deepEqual(await readBackupPayload(), snapshot);
@@ -121,4 +121,65 @@ test("legacy surah category is identical in cards and both editor entry points",
   assert.equal(getRecordIcon(item, "memorization"), "surah");
   assert.equal(getDefaultRecordCategory({ ...item, bagCategories: ["poetry"] }, "memorization"), "poetry");
   assert.equal(getDefaultRecordCategory({ ...item, name: "My text" }, "memorization"), "memorization");
+});
+
+test("legacy books join collections without changing identity or completion", async () => {
+  const book = { id: "legacy-book", title: "Old book", author: null, details: null, sortOrder: 12, createdAt: "2020-01-01", updatedAt: "2020-01-01", targetCount: 10, targetUnit: "custom", targetUnitLabel: "sayfa" };
+  await runTransaction("books", "readwrite", tx => { tx.objectStore("books").put(book); });
+  await completionRepository.set("books", book.id, "2026-09-28", true);
+  const entries = await collectionRepository.load();
+  assert.ok(selectCollection(entries, "favorites").some(entry => entry.id === "books:legacy-book"));
+  const reference = { moduleId: "books", itemId: book.id } as const;
+  await collectionRepository.setMembership(reference, "virds", true);
+  await collectionRepository.setMembership(reference, "favorites", false);
+  await collectionRepository.saveOrder([reference, ref], "virds");
+  const stored = await runTransaction("books", "readonly", tx => requestResult(tx.objectStore("books").get(book.id)));
+  assert.equal(stored.title, book.title);
+  assert.equal(stored.createdAt, book.createdAt);
+  assert.equal(stored.sortOrder, 12);
+  assert.equal(stored.virdSortOrder, 0);
+  assert.equal(stored.inVirds, true);
+  assert.equal(stored.liked, false);
+  assert.ok((await completionRepository.loadKeys("2026-09-28")).has("books:legacy-book"));
+});
+
+test("book assets and reading notes persist; replacement resets only that file's progress", async () => {
+  const { saveBookWithAsset, loadReader, saveReaderState, setLastBook } = await import("../app/data/reader-repository");
+  const { defaultReaderState } = await import("../app/core/reader");
+  const book = { id: "file-book", title: "PDF", author: null, details: null, sortOrder: 1, createdAt: "2026", updatedAt: "2026", targetCount: null, targetUnit: "custom" as const, targetUnitLabel: null, assetId: "asset-one", format: "pdf" as const };
+  await saveBookWithAsset(book, new File(["%PDF-1.7\n"], "test.pdf"));
+  await setLastBook(book.id);
+  const state = { ...defaultReaderState(book.id), location: { page: 3, zoom: 1.5, scroll: 0.4 }, annotations: [{ id: "note", text: "Selected text", note: "Remember", page: 3, rects: [{ x: 0.1, y: 0.2, width: 0.5, height: 0.1 }] }] };
+  await saveReaderState(state);
+  const loaded = await loadReader();
+  assert.equal(loaded?.asset.name, "test.pdf");
+  assert.deepEqual(loaded?.state, state);
+  const backup = await readBackupPayload();
+  assert.deepEqual(backup.readerStates?.find(s => s.id === book.id), state);
+  assert.ok(!JSON.stringify(backup).includes("%PDF-1.7"));
+  await saveBookWithAsset({ ...book, assetId: "asset-two" }, new File(["%PDF-1.7\nsecond"], "new.pdf"));
+  assert.deepEqual((await loadReader())?.state.location, {});
+  assert.equal(await runTransaction("bookAssets", "readonly", tx => requestResult(tx.objectStore("bookAssets").get("asset-one"))), undefined);
+});
+
+test("failed file writes roll back book metadata and malformed uploads create no records", async () => {
+  const { saveBookWithAsset } = await import("../app/data/reader-repository");
+  const book = { id: "failed-book", title: "Failed", author: null, details: null, sortOrder: 1, createdAt: "2026", updatedAt: "2026", targetCount: null, targetUnit: "custom" as const, targetUnitLabel: null, assetId: "failed-asset", format: "pdf" as const };
+  const original = IDBObjectStore.prototype.put;
+  IDBObjectStore.prototype.put = function (...args: Parameters<IDBObjectStore["put"]>) {
+    if (this.name === "bookAssets") throw new DOMException("Storage full", "QuotaExceededError");
+    return original.apply(this, args);
+  };
+  try { await assert.rejects(saveBookWithAsset(book, new File(["%PDF-1.7"], "test.pdf"))); }
+  finally { IDBObjectStore.prototype.put = original; }
+  assert.equal(await runTransaction("books", "readonly", tx => requestResult(tx.objectStore("books").get(book.id))), undefined);
+  await assert.rejects(saveBookWithAsset(book, new File(["not a PDF"], "bad.pdf")));
+  assert.equal(await runTransaction("books", "readonly", tx => requestResult(tx.objectStore("books").get(book.id))), undefined);
+});
+
+test("a retained old reader cannot overwrite progress after replacing its file", async () => {
+  const { loadReader, saveReaderState } = await import("../app/data/reader-repository");
+  const { defaultReaderState } = await import("../app/core/reader");
+  await saveReaderState({ ...defaultReaderState("file-book", "asset-one"), location: { page: 99 } });
+  assert.deepEqual((await loadReader("file-book"))?.state.location, {});
 });

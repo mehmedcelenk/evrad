@@ -55,14 +55,6 @@ export interface TrackableEntity {
 
 export type EntityTemplate<T extends TrackableEntity> = Omit<T, keyof TrackableEntity> & Pick<T, "id">;
 
-export interface TrackableRepository<T extends TrackableEntity> {
-  moduleId: TrackableModuleId;
-  load: () => Promise<T[]>;
-  save: (item: T) => Promise<void>;
-  saveOrder: (items: T[]) => Promise<void>;
-  remove: (id: string, remainingItems: T[]) => Promise<void>;
-}
-
 export interface TargetDraft {
   targetCount: string;
   targetUnit: TargetUnit;
@@ -101,6 +93,11 @@ export interface DevotionalDraft extends TargetDraft {
 }
 
 export interface BookItem extends TrackableEntity {
+  assetId?: string;
+  format?: "pdf" | "epub";
+  inVirds?: boolean;
+  liked?: boolean;
+  virdSortOrder?: number;
   title: string;
   author: string | null;
   details: string | null;

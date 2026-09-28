@@ -1,26 +1,26 @@
-import { collectionEntry, membershipPatch, orderPatch, type CollectionId, type RecordRef } from "../core/collections";
+import { collectionEntry, membershipPatch, orderPatch, type CollectionId, type LibraryItem, type RecordRef } from "../core/collections";
 import { storeTemplate } from "../core/entity";
-import { devotionalModuleIds } from "../core/module-registry";
+import { trackableModuleIds } from "../core/module-registry";
 import type { DevotionalItem, EntityTemplate } from "../core/types";
 import { getEntityStore, requestResult, runTransaction } from "./indexed-db";
 
-const stores = devotionalModuleIds.map(getEntityStore);
+const stores = trackableModuleIds.map(getEntityStore);
 
 async function load() {
   return runTransaction(stores, "readonly", async (transaction) => {
-    const groups = await Promise.all(devotionalModuleIds.map(async (moduleId) => {
-      const items = await requestResult(transaction.objectStore(getEntityStore(moduleId)).getAll() as IDBRequest<DevotionalItem[]>);
-      return items.map((item) => collectionEntry(moduleId, { ...item, contexts: item.contexts ?? [], source: item.source ?? null }, "favorites"));
+    const groups = await Promise.all(trackableModuleIds.map(async (moduleId) => {
+      const items = await requestResult(transaction.objectStore(getEntityStore(moduleId)).getAll() as IDBRequest<LibraryItem[]>);
+      return items.map((item) => collectionEntry(moduleId, "name" in item ? { ...item, contexts: item.contexts ?? [], source: item.source ?? null } : item, "favorites"));
     }));
     return groups.flat();
   });
 }
 
-async function patch(ref: RecordRef, changes: Partial<DevotionalItem>) {
+async function patch(ref: RecordRef, changes: Partial<LibraryItem>) {
   const storeName = getEntityStore(ref.moduleId);
   return runTransaction(storeName, "readwrite", async (transaction) => {
     const store = transaction.objectStore(storeName);
-    const current = await requestResult(store.get(ref.itemId) as IDBRequest<DevotionalItem | undefined>);
+    const current = await requestResult(store.get(ref.itemId) as IDBRequest<LibraryItem | undefined>);
     if (!current) throw new Error("Record no longer exists");
     const updated = { ...current, ...changes, id: current.id, createdAt: current.createdAt, updatedAt: new Date().toISOString() };
     store.put(updated);
@@ -33,7 +33,7 @@ async function setMembership(ref: RecordRef, collection: CollectionId, included:
   const storeName = getEntityStore(ref.moduleId);
   return runTransaction(storeName, "readwrite", async (transaction) => {
     const store = transaction.objectStore(storeName);
-    const current = await requestResult(store.get(ref.itemId) as IDBRequest<DevotionalItem | undefined>);
+    const current = await requestResult(store.get(ref.itemId) as IDBRequest<LibraryItem | undefined>);
     if (!current && !template) throw new Error("Record no longer exists");
     const base = current ?? { ...storeTemplate(template!, Date.now()), liked: false, inVirds: false };
     const updated = { ...base, ...membershipPatch(collection, included), updatedAt: new Date().toISOString() };
@@ -47,7 +47,7 @@ async function saveOrder(refs: RecordRef[], collection: CollectionId) {
   const storeNames = [...new Set(refs.map((ref) => getEntityStore(ref.moduleId)))];
   return runTransaction(storeNames, "readwrite", async (transaction) => {
     const records = await Promise.all(refs.map((ref) => requestResult(
-      transaction.objectStore(getEntityStore(ref.moduleId)).get(ref.itemId) as IDBRequest<DevotionalItem | undefined>,
+      transaction.objectStore(getEntityStore(ref.moduleId)).get(ref.itemId) as IDBRequest<LibraryItem | undefined>,
     )));
     if (records.some((item) => !item)) throw new Error("A sorted record no longer exists");
     records.forEach((item, index) => transaction.objectStore(getEntityStore(refs[index].moduleId)).put({

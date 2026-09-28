@@ -25,7 +25,7 @@ export function useCollection(collection: CollectionId) {
     items: entries,
     onChange: setOrderPreview,
     onPersist: persistOrder,
-    getAnnouncement: (entry, position) => t("card.reorderedGeneric", { title: entry.item.name ?? entry.item.arabic ?? "", position }),
+    getAnnouncement: (entry, position) => t("card.reorderedGeneric", { title: entry.moduleId === "books" ? entry.item.title : entry.item.name ?? entry.item.arabic ?? "", position }),
     onError: () => undefined, // mutate already reports the failure and restores the committed order.
   });
 

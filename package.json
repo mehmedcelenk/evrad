@@ -15,7 +15,9 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
+    "epubjs": "^0.3.93",
     "lucide-react": "^1.47.0",
+    "pdfjs-dist": "^6.3.289",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },
@@ -45,5 +47,10 @@
     "vite": "8.0.13",
     "wrangler": "4.92.0"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "epubjs": {
+      "@xmldom/xmldom": "0.9.12"
+    }
+  }
 }

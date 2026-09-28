@@ -1,5 +1,6 @@
 "use client";
 
+import { ReaderProvider } from "./features/reader/ReaderProvider";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { t } from "./core/i18n";
 import type { NavigationTarget } from "./core/module-registry";
@@ -50,7 +51,7 @@ export function AppShell({
   return (
     <AppRuntimeContext.Provider value={runtimeValue}>
       <RecordLibraryProvider>
-        <main className="app-shell">
+        <ReaderProvider><main className="app-shell">
           <div className="ambient ambient-one" />
           <div className="ambient ambient-two" />
           {children}
@@ -67,7 +68,7 @@ export function AppShell({
           />
           <QuickAddModal open={quickAddOpen} onClose={() => setQuickAddOpen(false)} onOpenDetailed={onOpenDetailed} />
           <AppNotifications message={toast} updateReady={updateReady} onActivateUpdate={activateUpdate} />
-        </main>
+        </main></ReaderProvider>
       </RecordLibraryProvider>
     </AppRuntimeContext.Provider>
   );

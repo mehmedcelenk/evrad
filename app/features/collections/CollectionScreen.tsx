@@ -1,5 +1,7 @@
 "use client";
 
+import { BookCollectionCard } from "../books/BookCollectionCard";
+import { BookCreateScreen } from "../books/BookCreateScreen";
 import { useState } from "react";
 import { CollectionChoiceModal, type CollectionChoice } from "../../components/CollectionChoiceModal";
 import { ModuleScreenHeader } from "../../components/ModuleScreenHeader";
@@ -29,10 +31,10 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
   const labels = copy[collection];
   const [editTarget, setEditTarget] = useState<CollectionEntry | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CollectionEntry | null>(null);
-  const visible = state.entries.filter((entry) => filters.matches(entry.item, entry.moduleId));
+  const visible = state.entries.filter((entry) => entry.moduleId === "books" ? (!filters.categories.length || filters.categories.includes("books")) && !filters.contexts.length : filters.matches(entry.item, entry.moduleId));
 
   const save = async (draft: DevotionalDraft) => {
-    if (!editTarget) return;
+    if (!editTarget || editTarget.moduleId === "books") return;
     const saved = await state.update(editTarget, devotionalContentFromDraft(draft));
     if (!saved) throw new Error("Record could not be saved");
   };
@@ -55,6 +57,8 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
       footer={<p className="quiet-note">{t("app.lightNote")}</p>}
     >
       {visible.length ? visible.map((entry) => (
+        entry.moduleId === "books" ? <BookCollectionCard key={entry.id} entry={entry} state={state}
+          onEdit={() => setEditTarget(entry)} onRemove={() => collection === "favorites" ? void state.update(entry, { liked: false }) : setRemoveTarget(entry)} /> :
         <DevotionalCard key={entry.id} cardId={entry.id} collection={collection}
           moduleId={entry.moduleId} item={entry.item} complete={state.completeKeys.has(entry.id)}
           expanded={state.expansion.expandedIds.has(entry.id)} dragging={state.sorting.draggingId === entry.id}
@@ -67,7 +71,7 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
           sortHandleProps={state.sorting.handleProps} />
       )) : <p className="filter-empty">{t("empty.simple")}</p>}
     </TrackableModuleLayout>
-    {editTarget ? <DevotionalEditor key={editTarget.id} item={editTarget.item} itemLabel={t("bag.record")}
+    {editTarget?.moduleId === "books" ? <BookCreateScreen item={editTarget.item} onClose={() => setEditTarget(null)} /> : editTarget ? <DevotionalEditor key={editTarget.id} item={editTarget.item} itemLabel={t("bag.record")}
       defaultCategory={getDefaultRecordCategory(editTarget.item, editTarget.moduleId)}
       onClose={() => setEditTarget(null)} onSave={save} /> : null}
     {removeTarget ? <CollectionChoiceModal title={t("collection.removeQuestion")} body={t("collection.removeBody")}

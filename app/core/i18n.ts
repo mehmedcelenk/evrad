@@ -1,4 +1,7 @@
+import { readerCopy } from "./reader-copy";
+
 export const tr = {
+  ...readerCopy,
   "app.lightNote": "Her işaret, güne düşen küçük bir nur.",
   "app.betaNote": "Virdlerim henüz beta sürümünde; geri bildirimlerinle gelişiyor.",
   "card.open": "{title} ayrıntılarını aç",

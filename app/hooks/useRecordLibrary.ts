@@ -1,9 +1,10 @@
 "use client";
 
 import { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { belongsToCollection, collectionEntry, orderPatch, recordKey, type CollectionEntry, type CollectionId, type RecordRef } from "../core/collections";
+import { belongsToCollection, collectionEntry, orderPatch, recordKey, type CollectionEntry, type CollectionId, type LibraryItem, type RecordRef } from "../core/collections";
 import { devotionalFromDraft } from "../core/devotional";
-import type { DevotionalDraft, DevotionalItem, EntityTemplate } from "../core/types";
+import type { DevotionalDraft, DevotionalItem, BookItem, EntityTemplate } from "../core/types";
+import { saveBookWithAsset } from "../data/reader-repository";
 import { collectionRepository } from "../data/collection-repository";
 
 // Commit writes before publishing state. Serialize local actions so two rapid
@@ -72,7 +73,7 @@ export function useRecordLibraryState(onError: () => void) {
   }, [replaceEntries]);
 
   return useMemo(() => {
-    const update = (ref: RecordRef, changes: Partial<DevotionalItem>) => mutate(async () => {
+    const update = (ref: RecordRef, changes: Partial<LibraryItem>) => mutate(async () => {
       publish(collectionEntry(ref.moduleId, await collectionRepository.patch(ref, changes), "favorites"));
     });
     const toggleMembership = (ref: RecordRef, collection: CollectionId, template?: EntityTemplate<DevotionalItem>) => mutate(async () => {
@@ -91,13 +92,14 @@ export function useRecordLibraryState(onError: () => void) {
       const orderById = new Map(next.map((entry) => [entry.id, entry.sortOrder]));
       replaceEntries(entriesRef.current.map((entry) => {
         const sortOrder = orderById.get(entry.id);
-        return sortOrder === undefined ? entry : {
-          ...entry,
-          item: { ...entry.item, ...orderPatch(collection, sortOrder) },
-        };
+        return sortOrder === undefined ? entry : collectionEntry(entry.moduleId, { ...entry.item, ...orderPatch(collection, sortOrder) }, collection);
       }));
     });
 
-    return { entries, ready, failed, update, toggleMembership, create, saveOrder };
+    const saveBook = (item: BookItem, file?: File) => mutate(async () => {
+      await saveBookWithAsset(item, file);
+      publish(collectionEntry("books", item, "favorites"));
+    });
+    return { saveBook, entries, ready, failed, update, toggleMembership, create, saveOrder };
   }, [entries, ready, failed, mutate, publish, replaceEntries]);
 }

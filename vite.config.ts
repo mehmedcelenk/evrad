@@ -1,3 +1,4 @@
+import { pdfAssets } from "./pdf-assets";
 import { sites } from "@openai/sites-vite-plugin";
 import vinext from "vinext";
 import { defineConfig } from "vite";
@@ -49,6 +50,7 @@ export default defineConfig(async () => {
       : undefined,
     plugins: [
       vinext(),
+      pdfAssets(),
       sites(),
       cloudflare({
         inspectorPort: false,

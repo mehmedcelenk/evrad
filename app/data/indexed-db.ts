@@ -2,7 +2,7 @@ import type { TrackableModuleId } from "../core/types";
 import { modules } from "../core/module-registry";
 
 const DB_NAME = "zikirlerim";
-const DB_VERSION = 8;
+const DB_VERSION = 9;
 
 export const ENTITY_STORES = Object.fromEntries(modules.map((module) => [module.id, module.storeName])) as Record<TrackableModuleId, string>;
 export const COMPLETION_STORE = "completions";
@@ -62,6 +62,9 @@ export function openDatabase(): Promise<IDBDatabase> {
           database.createObjectStore(storeName, { keyPath: "id" });
         }
       });
+      for (const name of ["bookAssets", "readerStates", "readerSettings"]) {
+        if (!database.objectStoreNames.contains(name)) database.createObjectStore(name, { keyPath: "id" });
+      }
       if (!database.objectStoreNames.contains(COMPLETION_STORE)) {
         const store = database.createObjectStore(COMPLETION_STORE, { keyPath: "key" });
         store.createIndex("localDate", "localDate", { unique: false });
