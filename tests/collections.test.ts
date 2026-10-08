@@ -9,12 +9,12 @@ import { collectionEntry, selectCollection } from "../app/core/collections";
 import { getLocalDateKey } from "../app/core/date";
 import { matchesRecordFilters, toggleSelection } from "../app/core/record-filters";
 import { getDefaultRecordCategory, getRecordIcon } from "../app/core/record-categories";
-import { discoveryCatalog } from "../app/features/discovery/discovery-catalog";
 import type { DevotionalItem } from "../app/core/types";
 
 const legacy: DevotionalItem = {
-  ...discoveryCatalog[0].item, id: "same-id", name: "Personal text",
-  sortOrder: 17, createdAt: "2020-01-01", updatedAt: "2020-01-02",
+  id: "same-id", name: "Personal text", arabic: null, translation: null, details: null, source: null,
+  sortOrder: 17, createdAt: "2020-01-01", updatedAt: "2020-01-02", targetCount: 33, targetUnit: "custom", targetUnitLabel: "kez",
+  expandedArabicSize: 2, bagCategories: ["dhikr"], contexts: ["general"], listDisplay: "name",
 };
 const ref = { moduleId: "dhikr", itemId: legacy.id } as const;
 const prayerRef = { moduleId: "prayers", itemId: legacy.id } as const;
@@ -42,42 +42,36 @@ test("upgrade preserves pre-v5 records, order, history and explicit membership",
   assert.equal(dhikr.sortOrder, 17);
   assert.equal(dhikr.virdSortOrder, 17);
   assert.equal(dhikr.inVirds, true);
-  assert.equal(dhikr.liked, true);
-  assert.equal(backup.entities.prayers[0].liked, false);
   assert.equal(backup.completions.length, 1);
 });
 
 test("same ID in separate legacy stores stays distinct", async () => {
   const entries = await collectionRepository.load();
   assert.equal(new Set(entries.map((entry) => entry.id)).size, 2);
-  assert.equal(selectCollection(entries, "virds").length, 1);
+  assert.equal(selectCollection(entries, "virds").length, 2);
 });
 
-test("heart and plus are independent and never replace customized content", async () => {
-  const template = { ...discoveryCatalog[0].item, id: "new-template" };
+test("vird membership updates and content editing persist correctly", async () => {
+  const template = { ...legacy, id: "new-template", name: "Template text" };
   const target = { moduleId: "dhikr", itemId: template.id } as const;
   const added = await collectionRepository.setMembership(target, "virds", true, template);
   assert.equal(added.inVirds, true);
-  assert.equal(added.liked, false);
   await collectionRepository.patch(target, { name: "My title" });
-  const liked = await collectionRepository.setMembership(target, "favorites", true, template);
-  assert.equal("name" in liked && liked.name, "My title");
-  assert.equal(liked.inVirds, true);
+  const updated = await collectionRepository.load();
+  const entry = updated.find((item) => item.itemId === "new-template");
+  assert.equal("name" in entry!.item && entry!.item.name, "My title");
   await completionRepository.set("dhikr", template.id, "2026-09-22", true);
-  const unliked = await collectionRepository.setMembership(target, "favorites", false);
-  assert.equal(unliked.inVirds, true);
   assert.equal((await completionRepository.loadKeys("2026-09-22")).has("dhikr:new-template"), true);
 });
 
-test("cross-store order changes preserve content and the other collection order", async () => {
+test("cross-store order changes preserve content and order", async () => {
   await collectionRepository.saveOrder([prayerRef, ref], "virds");
   const entries = await collectionRepository.load();
   const dhikr = entries.find((entry) => entry.id === "dhikr:same-id")!.item;
   assert.equal(dhikr.virdSortOrder, 1);
-  assert.equal(dhikr.sortOrder, 17);
   assert.equal("name" in dhikr && dhikr.name, legacy.name);
   const snapshot = await readBackupPayload();
-  await assert.rejects(collectionRepository.saveOrder([ref, { moduleId: "poetry", itemId: "missing" }], "favorites"));
+  await assert.rejects(collectionRepository.saveOrder([ref, { moduleId: "poetry", itemId: "missing" }], "virds"));
   assert.deepEqual(await readBackupPayload(), snapshot);
 });
 
@@ -116,11 +110,11 @@ test("record filters combine selected types with selected contexts without mutat
 });
 
 test("legacy surah category is identical in cards and both editor entry points", () => {
-  const item = { ...legacy, name: "Nâs Sûresi", source: null };
+  const item = { ...legacy, name: "Nâs Sûresi", source: null, bagCategories: ["surahs" as const] };
   assert.equal(getDefaultRecordCategory(item, "memorization"), "surahs");
   assert.equal(getRecordIcon(item, "memorization"), "surah");
   assert.equal(getDefaultRecordCategory({ ...item, bagCategories: ["poetry"] }, "memorization"), "poetry");
-  assert.equal(getDefaultRecordCategory({ ...item, name: "My text" }, "memorization"), "memorization");
+  assert.equal(getDefaultRecordCategory({ ...item, name: "My text", bagCategories: ["memorization"] }, "memorization"), "memorization");
 });
 
 test("legacy books join collections without changing identity or completion", async () => {
@@ -128,18 +122,15 @@ test("legacy books join collections without changing identity or completion", as
   await runTransaction("books", "readwrite", tx => { tx.objectStore("books").put(book); });
   await completionRepository.set("books", book.id, "2026-09-28", true);
   const entries = await collectionRepository.load();
-  assert.ok(selectCollection(entries, "favorites").some(entry => entry.id === "books:legacy-book"));
+  assert.ok(selectCollection(entries, "virds").some(entry => entry.id === "books:legacy-book"));
   const reference = { moduleId: "books", itemId: book.id } as const;
   await collectionRepository.setMembership(reference, "virds", true);
-  await collectionRepository.setMembership(reference, "favorites", false);
   await collectionRepository.saveOrder([reference, ref], "virds");
   const stored = await runTransaction("books", "readonly", tx => requestResult(tx.objectStore("books").get(book.id)));
   assert.equal(stored.title, book.title);
   assert.equal(stored.createdAt, book.createdAt);
-  assert.equal(stored.sortOrder, 12);
   assert.equal(stored.virdSortOrder, 0);
   assert.equal(stored.inVirds, true);
-  assert.equal(stored.liked, false);
   assert.ok((await completionRepository.loadKeys("2026-09-28")).has("books:legacy-book"));
 });
 

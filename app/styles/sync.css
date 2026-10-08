@@ -1,0 +1,182 @@
+/* Bulut Eşitleme ve Yedekleme Stilleri */
+
+.settings-sync-panel,
+.settings-backup-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.settings-section-subtitle {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.settings-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.65rem 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.settings-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.settings-inline-action {
+  background: transparent;
+  border: 0;
+  color: var(--light-warm);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.3rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.settings-inline-action:active {
+  opacity: 0.7;
+}
+
+.settings-text-input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard);
+}
+
+.settings-text-input:focus {
+  outline: none;
+  border-color: var(--light-warm);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.settings-sync-actions,
+.settings-backup-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.settings-sync-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.85rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), transform var(--motion-press) var(--ease-standard);
+}
+
+.settings-sync-btn:active {
+  transform: scale(0.97);
+}
+
+.settings-sync-btn.is-primary {
+  background: var(--light-warm);
+  color: #0d0f13;
+  border-color: var(--light-warm);
+  box-shadow: 0 0 12px var(--aura);
+}
+
+.settings-sync-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.settings-sync-status {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.settings-help-accordion {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  margin-top: 0.5rem;
+}
+
+.settings-accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: 0;
+  color: var(--text-soft);
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.accordion-caret {
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+
+.accordion-caret.is-open {
+  transform: rotate(180deg);
+}
+
+.settings-accordion-content {
+  padding: 0.8rem 1rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings-sql-code {
+  margin: 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.74rem;
+  color: #d1d5db;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.settings-sql-copy-btn {
+  align-self: flex-start;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--light-warm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}

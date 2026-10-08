@@ -8,7 +8,6 @@ import type { DevotionalDraft } from "../core/types";
 import { useAsyncAction } from "../hooks/useAsyncAction";
 import { useCreateRecord } from "../features/collections/useCreateRecord";
 import { RecordCreateScreen } from "../features/collections/RecordCreateScreen";
-import { BookCreateScreen } from "../features/books/BookCreateScreen";
 import { Dialog } from "./Dialog";
 
 interface QuickAddModalProps {
@@ -22,7 +21,6 @@ export function QuickAddModal({ open, ...props }: QuickAddModalProps) {
 }
 
 function QuickAddContent({ onClose, onOpenDetailed }: Omit<QuickAddModalProps, "open">) {
-  const [book, setBook] = useState(false);
   const [text, setText] = useState("");
   const [failed, setFailed] = useState(false);
   const [detailed, setDetailed] = useState<DevotionalDraft | null>(null);
@@ -37,7 +35,6 @@ function QuickAddContent({ onClose, onOpenDetailed }: Omit<QuickAddModalProps, "
     else setDetailed(nextDraft.current);
   };
 
-  if (book) return <BookCreateScreen onClose={onClose} />;
   if (detailed) return <RecordCreateScreen initialDraft={detailed} onClose={onClose} />;
   return <Dialog variant="quick-add" labelledBy={titleId} busy={pending} onClose={finish}>
     {(close) => <div className="quick-add-card">
@@ -57,7 +54,6 @@ function QuickAddContent({ onClose, onOpenDetailed }: Omit<QuickAddModalProps, "
           value={text} onChange={(event) => setText(event.target.value)} placeholder={t("quickAdd.placeholder")}
           aria-label={t("quickAdd.placeholder")} dir={draft.arabic ? "rtl" : "ltr"} autoComplete="off" disabled={pending} />
         {failed ? <p className="form-error" role="alert">{t("toast.storageError")}</p> : null}
-        <button type="button" className="quick-add-detail-btn" disabled={pending} onClick={() => setBook(true)}>{t("reader.add")}</button>
         <div className="quick-add-actions">
           <button type="button" className="quick-add-detail-btn" disabled={pending} onClick={() => { nextDraft.current = draft; close(); }}>
             <SlidersHorizontal className="quick-add-btn-icon" aria-hidden="true" /><span>{t("quickAdd.detail")}</span>

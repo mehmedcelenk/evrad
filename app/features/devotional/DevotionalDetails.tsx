@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { Volume2 } from "lucide-react";
 import { DetailBlock, ExpandableCardContent } from "../../components/TrackerPrimitives";
 import { containsArabic } from "../../core/devotional-draft";
 import { t } from "../../core/i18n";
@@ -29,28 +30,31 @@ export function DevotionalDetails({
   return (
     <ExpandableCardContent>
       {item.name ? (
-        <DetailBlock label={t("detail.name")}>
+        <DetailBlock>
           <p className={isNameArabic ? "arabic-text" : undefined} dir="auto" style={isNameArabic ? { fontFamily: "var(--font-arabic)" } : undefined}>
             {displayName}
           </p>
         </DetailBlock>
       ) : null}
       {item.arabic ? (
-        <DetailBlock label={t("detail.arabic")} className="arabic-detail">
+        <DetailBlock className="arabic-detail">
           <div className="font-controls">
-            <button type="button" onClick={() => onChangeFont(-1)} aria-label={t("detail.fontSmaller")} disabled={fontLevel === 0}>A−</button>
-            <span>{t("detail.fontLevel", { level: fontLevel + 1 })}</span>
-            <button type="button" onClick={() => onChangeFont(1)} aria-label={t("detail.fontLarger")} disabled={fontLevel === 4}>A+</button>
+            <button type="button" onClick={() => onChangeFont(-1)} aria-label={t("detail.fontSmaller")} disabled={fontLevel === 0}>−</button>
+            <button type="button" onClick={() => onChangeFont(1)} aria-label={t("detail.fontLarger")} disabled={fontLevel === 4}>+</button>
+            <button type="button" className="audio-v2-btn" title="Ses (v2)" aria-label="Ses dinle (v2)">
+              <Volume2 size={16} strokeWidth={1.8} />
+            </button>
           </div>
           <p className="expanded-arabic" dir="auto" style={{ fontFamily: "var(--font-arabic)", fontSize: `calc(${fontSizes[fontLevel]} * var(--text-scale, 1))`, lineHeight: "var(--arabic-line-height, 1.72)" }}>
             {formatArabicDiacritics(item.arabic, showDiacritics)}
           </p>
         </DetailBlock>
       ) : null}
-      {item.translation && showTranslations ? <DetailBlock label={t("detail.translation")}><p>{item.translation}</p></DetailBlock> : null}
-      {item.details ? <DetailBlock label={t("detail.details")}><p className="details-copy">{item.details}</p></DetailBlock> : null}
-      {item.source ? <DetailBlock label={t("detail.source")}><p>{item.source}</p></DetailBlock> : null}
+      {item.translation && showTranslations ? <DetailBlock><p>{item.translation}</p></DetailBlock> : null}
+      {item.details ? <DetailBlock><p className="details-copy">{item.details}</p></DetailBlock> : null}
+      {item.source ? <DetailBlock><p>{item.source}</p></DetailBlock> : null}
       {actions}
     </ExpandableCardContent>
   );
 }
+

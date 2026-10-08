@@ -2,6 +2,7 @@
 
 import { t } from "../../core/i18n";
 import { ArabicFontSettings } from "./ArabicFontSettings";
+import { SupabaseSyncSettings } from "./SupabaseSyncSettings";
 
 export function SettingsScreen({ active = true }: { active?: boolean }) {
   return (
@@ -14,6 +15,7 @@ export function SettingsScreen({ active = true }: { active?: boolean }) {
       </header>
 
       <ArabicFontSettings active={active} />
+      <SupabaseSyncSettings />
     </div>
   );
 }

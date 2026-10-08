@@ -3,8 +3,6 @@
 import {
   CollapsedCardSummary,
   CompletionLight,
-  AddToLibraryButton,
-  LikeButton,
   TargetBadge,
   TrackableCardShell,
   type SortHandleHandlers,
@@ -42,15 +40,10 @@ export function DevotionalCard(props: DevotionalCardProps) {
   return (
     <TrackableCardShell
       id={props.cardId ?? item.id}
-      complete={props.collection === "virds" && props.complete}
+      complete={props.complete}
       expanded={props.expanded}
       dragging={props.dragging}
       dragOffsetY={props.dragOffsetY}
-      leading={(
-        props.collection === "favorites" ? (
-          <LikeButton title={display.text} liked onToggle={props.onRemoveFromCollections} />
-        ) : undefined
-      )}
       marker={<ModuleGlyph icon={getRecordIcon(item, props.moduleId)} />}
       targetBadge={<TargetBadge count={item.targetCount} unit={item.targetUnit} unitLabel={item.targetUnitLabel} />}
       summary={(
@@ -64,15 +57,11 @@ export function DevotionalCard(props: DevotionalCardProps) {
         />
       )}
       trailing={(
-        props.collection === "favorites" ? (
-          <AddToLibraryButton title={display.text} added={Boolean(props.inVirds)} onAdd={props.onToggleVird} />
-        ) : (
-          <CompletionLight
-            complete={props.collection === "virds" && props.complete}
-            onToggle={props.onToggleComplete}
-            label={t(props.complete ? "card.undoCompleteGeneric" : "card.completeGeneric", { title: display.text })}
-          />
-        )
+        <CompletionLight
+          complete={props.complete}
+          onToggle={props.onToggleComplete}
+          label={t(props.complete ? "card.undoCompleteGeneric" : "card.completeGeneric", { title: display.text })}
+        />
       )}
     >
       <DevotionalDetails
@@ -82,10 +71,11 @@ export function DevotionalCard(props: DevotionalCardProps) {
         actions={(
           <footer className="card-actions">
             <button type="button" className="edit-button" onClick={props.onEdit}>{t("action.edit")}</button>
-            <button type="button" className="danger-button" onClick={props.onRemoveFromCollections}>{t(props.collection === "favorites" ? "collection.removeFromBag" : "collection.remove")}</button>
+            <button type="button" className="danger-button" onClick={props.onRemoveFromCollections}>{t("collection.remove")}</button>
           </footer>
         )}
       />
     </TrackableCardShell>
   );
 }
+

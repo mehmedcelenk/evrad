@@ -38,6 +38,10 @@
 
 * { box-sizing: border-box; }
 
+html, body, button, a, input, select, textarea, article, label {
+  touch-action: manipulation;
+}
+
 html {
   min-width: 0;
   background: var(--background);

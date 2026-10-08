@@ -3,7 +3,7 @@
 import { BookCollectionCard } from "../books/BookCollectionCard";
 import { BookCreateScreen } from "../books/BookCreateScreen";
 import { useState } from "react";
-import { CollectionChoiceModal, type CollectionChoice } from "../../components/CollectionChoiceModal";
+import { DeleteConfirmation } from "../../components/DeleteConfirmation";
 import { ModuleScreenHeader } from "../../components/ModuleScreenHeader";
 import { RecordFilters } from "../../components/RecordFilters";
 import { SortStatus } from "../../components/SortStatus";
@@ -22,13 +22,12 @@ import { devotionalContentFromDraft } from "../../core/devotional";
 
 const copy = {
   virds: { title: "module.dhikr.title", eyebrow: "module.dhikr.eyebrow", tagline: "module.dhikr.tagline" },
-  favorites: { title: "module.bag.title", eyebrow: "module.bag.eyebrow", tagline: "module.bag.tagline" },
 } as const;
 
-export function CollectionScreen({ collection }: { collection: CollectionId }) {
+export function CollectionScreen({ collection = "virds" }: { collection?: CollectionId }) {
   const state = useCollection(collection);
   const filters = useRecordFilters();
-  const labels = copy[collection];
+  const labels = copy.virds;
   const [editTarget, setEditTarget] = useState<CollectionEntry | null>(null);
   const [removeTarget, setRemoveTarget] = useState<CollectionEntry | null>(null);
   const visible = state.entries.filter((entry) => entry.moduleId === "books" ? (!filters.categories.length || filters.categories.includes("books")) && !filters.contexts.length : filters.matches(entry.item, entry.moduleId));
@@ -39,10 +38,11 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
     if (!saved) throw new Error("Record could not be saved");
   };
 
-  const remove = async (choice: CollectionChoice) => {
-    if (!removeTarget) return;
-    const patch = choice === "virds" ? { inVirds: false } : choice === "bag" ? { liked: false } : { inVirds: false, liked: false };
-    return state.update(removeTarget, patch);
+  const remove = async () => {
+    if (!removeTarget) return false;
+    const ok = await state.update(removeTarget, { inVirds: false });
+    setRemoveTarget(null);
+    return Boolean(ok);
   };
 
   return <>
@@ -58,7 +58,7 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
     >
       {visible.length ? visible.map((entry) => (
         entry.moduleId === "books" ? <BookCollectionCard key={entry.id} entry={entry} state={state}
-          onEdit={() => setEditTarget(entry)} onRemove={() => collection === "favorites" ? void state.update(entry, { liked: false }) : setRemoveTarget(entry)} /> :
+          onEdit={() => setEditTarget(entry)} onRemove={() => setRemoveTarget(entry)} /> :
         <DevotionalCard key={entry.id} cardId={entry.id} collection={collection}
           moduleId={entry.moduleId} item={entry.item} complete={state.completeKeys.has(entry.id)}
           expanded={state.expansion.expandedIds.has(entry.id)} dragging={state.sorting.draggingId === entry.id}
@@ -66,7 +66,7 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
           onToggleExpanded={() => state.expansion.toggleExpanded(entry.id)} onToggleComplete={() => state.toggleComplete(entry)}
           onChangeFont={(direction) => void state.update(entry, { expandedArabicSize: Math.max(0, Math.min(4, entry.item.expandedArabicSize + direction)) as ArabicFontLevel })}
           onEdit={() => setEditTarget(entry)}
-          onRemoveFromCollections={() => collection === "favorites" ? void state.update(entry, { liked: false }) : setRemoveTarget(entry)}
+          onRemoveFromCollections={() => setRemoveTarget(entry)}
           inVirds={Boolean(entry.item.inVirds)} onToggleVird={() => void state.toggleMembership(entry, "virds")}
           sortHandleProps={state.sorting.handleProps} />
       )) : <p className="filter-empty">{t("empty.simple")}</p>}
@@ -74,7 +74,8 @@ export function CollectionScreen({ collection }: { collection: CollectionId }) {
     {editTarget?.moduleId === "books" ? <BookCreateScreen item={editTarget.item} onClose={() => setEditTarget(null)} /> : editTarget ? <DevotionalEditor key={editTarget.id} item={editTarget.item} itemLabel={t("bag.record")}
       defaultCategory={getDefaultRecordCategory(editTarget.item, editTarget.moduleId)}
       onClose={() => setEditTarget(null)} onSave={save} /> : null}
-    {removeTarget ? <CollectionChoiceModal title={t("collection.removeQuestion")} body={t("collection.removeBody")}
-      choices={["virds", "bag", "both"]} onCancel={() => setRemoveTarget(null)} onChoose={remove} /> : null}
+    {removeTarget ? <DeleteConfirmation title={"name" in removeTarget.item ? removeTarget.item.name || removeTarget.item.arabic || "" : removeTarget.item.title}
+      itemLabel={t("bag.record")} onCancel={() => setRemoveTarget(null)} onConfirm={remove} /> : null}
   </>;
 }
+

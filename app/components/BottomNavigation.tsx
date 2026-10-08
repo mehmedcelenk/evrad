@@ -1,11 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { BookOpen, Plus, Settings } from "lucide-react";
+import { Plus, Settings } from "lucide-react";
 import Link from "next/link";
 import { t, type TranslationKey } from "../core/i18n";
-import { appSections, getSectionRoute, type NavigationTarget } from "../core/module-registry";
-import { useReader } from "../features/reader/useReader";
+import { getSectionRoute, type NavigationTarget } from "../core/module-registry";
 import { NavigationGlyph } from "./NavigationGlyph";
 
 function NavigationLink({ target, label, selected, className, onSelect, children }: {
@@ -27,17 +26,13 @@ export function BottomNavigation({ section, onSelectSection, onOpenQuickAdd, isS
   onOpenQuickAdd?: () => void;
   isScrolledHidden?: boolean;
 }) {
-  const reader = useReader();
   const select = (target: NavigationTarget) => onSelectSection ? () => onSelectSection(target) : undefined;
-  return <nav className={`bottom-navigation${isScrolledHidden ? " is-scrolled-hidden" : ""}`} aria-label={t("menu.label")} inert={isScrolledHidden}>
+  const hidden = isScrolledHidden;
+  return <nav className={`bottom-navigation${hidden ? " is-scrolled-hidden" : ""}`} aria-label={t("menu.label")} inert={hidden}>
     <div className="bottom-base-row">
-      <div className="bottom-space-segment">
-        {appSections.map((item) => <NavigationLink key={item.id} target={item.id} label={item.label}
-          selected={section === item.id} className="bottom-space-option" onSelect={select(item.id)}>
-          <NavigationGlyph name={item.icon} />
-        </NavigationLink>)}
-      </div>
-      <button type="button" className="bottom-nav-button" aria-label={t("reader.menu")} title={t("reader.menu")} onClick={() => void reader.open()}><BookOpen className="navigation-glyph" aria-hidden="true" /></button>
+      <NavigationLink target="virds" label="menu.virds" selected={section === "virds"} className="bottom-nav-button bottom-space-option" onSelect={select("virds")}>
+        <NavigationGlyph name="virds" />
+      </NavigationLink>
       <NavigationLink target="create" label="menu.addBag" selected={section === "create"} className="bottom-nav-button bottom-add" onSelect={onOpenQuickAdd}>
         <Plus className="navigation-glyph" aria-hidden="true" strokeWidth={1.8} />
       </NavigationLink>

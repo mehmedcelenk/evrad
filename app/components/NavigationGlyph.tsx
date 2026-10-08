@@ -1,7 +1,6 @@
-import { Compass, ListChecks } from "lucide-react";
+import { ListChecks } from "lucide-react";
 
-export function NavigationGlyph({ name }: { name: "virds" | "favorites" | "discover" }) {
-  if (name === "favorites") return <span className="navigation-heart" aria-hidden="true">🫀</span>;
-  const Glyph = name === "virds" ? ListChecks : Compass;
-  return <Glyph className={`navigation-glyph is-${name}`} aria-hidden="true" strokeWidth={1.8} />;
+export function NavigationGlyph({ name = "virds" }: { name?: "virds" }) {
+  return <ListChecks className="navigation-glyph is-virds" aria-hidden="true" strokeWidth={1.8} />;
 }
+

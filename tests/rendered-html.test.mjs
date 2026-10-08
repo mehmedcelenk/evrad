@@ -12,13 +12,13 @@ async function render(pathname) {
 }
 
 test("canonical screens render accessible navigation and PWA metadata", async () => {
-  for (const [path, label] of [["/virdlerim", "Virdlerim"], ["/canta", "Beğenilenler"], ["/kesfet/canta", "Keşfet"]]) {
+  for (const [path, label] of [["/virdlerim", "Virdlerim"]]) {
     const response = await render(path);
     assert.equal(response.status, 200, path);
     const html = await response.text();
     assert.match(html, new RegExp(`aria-label="${label}" aria-current="page"`));
     assert.match(html, /class="bottom-navigation"/);
-    for (const href of ["/virdlerim", "/canta", "/kesfet/canta", "/virdlerim/yeni"]) {
+    for (const href of ["/virdlerim", "/virdlerim/yeni", "/ayarlar"]) {
       assert.ok(html.includes(`href="${href}"`), href);
     }
     assert.match(html, /الحمد لله/);
@@ -30,9 +30,7 @@ test("canonical screens render accessible navigation and PWA metadata", async ()
 test("legacy section URLs redirect without stranding old links", async () => {
   for (const [path, target] of [
     ["/", "/virdlerim"],
-    ...["zikirler", "dualar", "ezberler", "sureler", "siirler"].map((part) => [`/${part}`, "/canta"]),
-    ...["zikirler", "dualar", "ezberler", "sureler", "siirler", "kitaplar", "oyunlar"].map((part) => [`/kesfet/${part}`, "/kesfet/canta"]),
-    ["/oyunlar", "/kesfet/canta"],
+    ...["zikirler", "dualar", "ezberler", "sureler", "siirler", "oyunlar"].map((part) => [`/${part}`, "/virdlerim"]),
   ]) {
     const response = await render(path);
     assert.ok([307, 308].includes(response.status), path);
@@ -41,7 +39,7 @@ test("legacy section URLs redirect without stranding old links", async () => {
 });
 
 test("shared create form and legacy edit/book routes remain reachable", async () => {
-  for (const path of ["/virdlerim/yeni", "/canta/yeni", "/zikirler/yeni", "/dualar/yeni", "/ezberler/yeni", "/sureler/yeni", "/siirler/yeni"]) {
+  for (const path of ["/virdlerim/yeni", "/zikirler/yeni", "/dualar/yeni", "/ezberler/yeni", "/sureler/yeni", "/siirler/yeni"]) {
     const response = await render(path);
     assert.equal(response.status, 200, path);
     const html = await response.text();

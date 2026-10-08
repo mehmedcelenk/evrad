@@ -2,8 +2,6 @@ import type { DevotionalModuleId, TrackableModuleDefinition, TrackableModuleId }
 
 export const appSections = [
   { id: "virds", route: "/virdlerim", label: "menu.virds", icon: "virds" },
-  { id: "favorites", route: "/canta", label: "menu.bag", icon: "favorites" },
-  { id: "discover", route: "/kesfet/canta", label: "menu.discover", icon: "discover" },
 ] as const;
 export type AppSection = typeof appSections[number]["id"];
 export const mainSections = [...appSections, { id: "settings", route: "/ayarlar", label: "menu.settings", icon: "settings" }] as const;
@@ -43,7 +41,6 @@ function createTrackableModule(
     kind,
     icon,
     route,
-    discoverRoute: `/kesfet${route}`,
     create: { route: `${route}/yeni`, label: addLabel },
     copy: {
       menu,
@@ -51,7 +48,6 @@ function createTrackableModule(
       singular: `${copyPrefix}.singular`,
       eyebrow: `${copyPrefix}.eyebrow`,
       tagline: `${copyPrefix}.tagline`,
-      discoverTitle: `discover.${id}.title`,
     },
   } as TrackableModuleDefinition;
 }

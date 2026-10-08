@@ -5,6 +5,8 @@ import { recordKey } from "../core/collections";
 import type { TrackableModuleId } from "../core/types";
 import { completionRepository } from "../data/completion-repository";
 import { useLocalDay } from "./useLocalDay";
+import { pushToSupabase } from "../data/supabase/sync-service";
+import { getSupabaseConfig } from "../data/supabase/supabase-config";
 
 export const CompletionContext = createContext<ReturnType<typeof useCompletionStore> | null>(null);
 
@@ -25,14 +27,28 @@ export function useCompletionStore(onError: () => void, resetTime: string) {
     let active = true;
     currentDate.current = date;
     keysRef.current = new Set();
-    completionRepository.loadKeys(date).then((keys) => {
-      if (!active) return;
-      keysRef.current = keys;
-      setState({ date, keys, failed: false });
-    }).catch(() => {
-      if (active) { setState({ date, keys: new Set(), failed: true }); onError(); }
-    });
-    return () => { active = false; currentDate.current = ""; };
+    const load = () => {
+      completionRepository.loadKeys(date).then((keys) => {
+        if (!active) return;
+        keysRef.current = keys;
+        setState({ date, keys, failed: false });
+      }).catch(() => {
+        if (active) { setState({ date, keys: new Set(), failed: true }); onError(); }
+      });
+    };
+    load();
+    if (typeof window !== "undefined") {
+      window.addEventListener("evrad:user-changed", load);
+      window.addEventListener("evrad:synced", load);
+    }
+    return () => {
+      active = false;
+      currentDate.current = "";
+      if (typeof window !== "undefined") {
+        window.removeEventListener("evrad:user-changed", load);
+        window.removeEventListener("evrad:synced", load);
+      }
+    };
   }, [date, onError]);
 
   const toggle = useCallback(async (moduleId: TrackableModuleId, itemId: string) => {
@@ -51,6 +67,10 @@ export function useCompletionStore(onError: () => void, resetTime: string) {
     publish(!wasComplete);
     try {
       await completionRepository.set(moduleId, itemId, date, !wasComplete);
+      const cfg = getSupabaseConfig();
+      if (cfg.autoSync && cfg.url && cfg.anonKey && cfg.syncKey) {
+        void pushToSupabase().catch(() => {});
+      }
     } catch {
       publish(wasComplete);
       onError();

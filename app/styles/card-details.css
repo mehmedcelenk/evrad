@@ -14,10 +14,11 @@
 .details-copy { white-space: pre-line; }
 
 .arabic-detail .detail-label { margin-bottom: 0; }
-.font-controls { display: grid; grid-template-columns: 2.75rem 1fr 2.75rem; align-items: center; gap: 0.45rem; margin: 0.5rem 0 0.8rem; }
-.font-controls button { min-height: 2.75rem; border: 1px solid var(--line); border-radius: 0.8rem; background: rgba(255, 255, 255, 0.025); color: var(--text-soft); }
+.font-controls { display: flex; align-items: center; gap: 0.5rem; margin: 0.4rem 0 0.8rem; }
+.font-controls button { min-width: 2.3rem; min-height: 2.3rem; padding: 0 0.65rem; border: 1px solid var(--line); border-radius: 0.65rem; background: rgba(255, 255, 255, 0.025); color: var(--text-soft); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; }
 .font-controls button:disabled { opacity: 0.28; cursor: default; }
-.font-controls span { color: var(--muted); font-size: 0.68rem; text-align: center; }
+.font-controls .audio-v2-btn { margin-left: auto; border-color: rgba(255, 255, 255, 0.12); opacity: 0.65; transition: opacity 0.2s ease; }
+.font-controls .audio-v2-btn:hover { opacity: 1; }
 
 .card-actions { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 0.25rem 0.35rem; }
 .edit-button { min-height: 2.75rem; padding: 0 1rem; border: 1px solid var(--line); border-radius: 0.85rem; color: var(--text-soft); }

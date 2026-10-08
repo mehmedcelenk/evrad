@@ -51,7 +51,12 @@ export function AppShell({
   return (
     <AppRuntimeContext.Provider value={runtimeValue}>
       <RecordLibraryProvider>
-        <ReaderProvider><main className="app-shell">
+        <ReaderProvider navigation={<BottomNavigation
+          section={section}
+          onSelectSection={onSelectSection}
+          onOpenQuickAdd={() => setQuickAddOpen(true)}
+          isScrolledHidden={isScrolledDown && !quickAddOpen}
+        />}><main className="app-shell">
           <div className="ambient ambient-one" />
           <div className="ambient ambient-two" />
           {children}
@@ -59,12 +64,6 @@ export function AppShell({
             label={t("backup.save")}
             saving={backup.saving}
             onBackup={() => void backup.exportBackup()}
-          />
-          <BottomNavigation
-            section={section}
-            onSelectSection={onSelectSection}
-            onOpenQuickAdd={() => setQuickAddOpen(true)}
-            isScrolledHidden={isScrolledDown && !quickAddOpen}
           />
           <QuickAddModal open={quickAddOpen} onClose={() => setQuickAddOpen(false)} onOpenDetailed={onOpenDetailed} />
           <AppNotifications message={toast} updateReady={updateReady} onActivateUpdate={activateUpdate} />

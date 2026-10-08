@@ -6,7 +6,6 @@ import { mainSections, type MainSection, type NavigationTarget } from "../core/m
 import type { DevotionalDraft } from "../core/types";
 import { CollectionScreen } from "../features/collections/CollectionScreen";
 import { RecordCreateScreen } from "../features/collections/RecordCreateScreen";
-import { DiscoveryScreen } from "../features/discovery/DiscoveryScreen";
 import { SettingsScreen } from "../features/settings/SettingsScreen";
 import { useSectionPager } from "../hooks/useSectionPager";
 
@@ -35,8 +34,7 @@ export function MainSectionsView({ initialSection }: { initialSection: Navigatio
       {mainSections.map(({ id }) => <div key={id} className="main-swipe-page" data-section={id}
         data-active={activeSection === id} inert={activeSection !== id}>
         {mounted.includes(id) ? (
-          id === "settings" ? <SettingsScreen active={activeSection === id} /> :
-          id === "discover" ? <DiscoveryScreen /> : <CollectionScreen collection={id} />
+          id === "settings" ? <SettingsScreen active={activeSection === id} /> : <CollectionScreen collection={id} />
         ) : null}
       </div>)}
     </div>

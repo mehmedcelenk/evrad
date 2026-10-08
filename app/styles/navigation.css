@@ -42,7 +42,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.bottom-base-row { display: flex; align-items: center; gap: 0.08rem; }
+.bottom-base-row { display: flex; align-items: center; gap: 0.35rem; }
 .bottom-space-segment { display: flex; padding: 0.1rem; border-radius: 0.58rem; background: rgba(255, 255, 255, 0.045); }
 .bottom-nav-button, .bottom-space-option {
   display: grid;
@@ -59,7 +59,8 @@
   cursor: pointer;
 }
 .bottom-space-option.is-selected,
-.bottom-settings.is-selected { background: var(--light); color: #15171c; }
+.bottom-settings.is-selected,
+.bottom-nav-button.is-selected { background: var(--light); color: #15171c; }
 .bottom-add { color: var(--light); }
 .bottom-settings { color: var(--muted); }
 .bottom-settings:hover { color: var(--text); }

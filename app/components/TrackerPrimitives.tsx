@@ -133,23 +133,7 @@ export function CompletionLight({
   );
 }
 
-export function AddToLibraryButton({ title, added, onAdd }: { title: string; added: boolean; onAdd: () => void }) {
-  return (
-    <button
-      className={`completion-light discovery-add${added ? " is-added" : ""}`}
-      type="button"
-      onClick={onAdd}
-      aria-label={t(added ? "discover.added" : "discover.add", { title })}
-      aria-pressed={added}
-    >
-      <span className="completion-core" aria-hidden="true"><PlusMinusIcon minus={added} /></span>
-    </button>
-  );
-}
 
-export function LikeButton({ title, liked, onToggle }: { title: string; liked: boolean; onToggle: () => void }) {
-  return <button className={`completion-light discovery-like${liked ? " is-liked" : ""}`} type="button" onClick={onToggle} aria-label={t(liked ? "discover.unlike" : "discover.like", { title })} aria-pressed={liked}><span aria-hidden="true">🫀</span></button>;
-}
 
 export function SortHandle({
   sortId,
@@ -188,14 +172,14 @@ export function DetailBlock({
   className = "",
   style,
 }: {
-  label: string;
+  label?: string;
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
 }) {
   return (
     <section className={`detail-block ${className}`}>
-      <p className="detail-label">{label}</p>
+      {label ? <p className="detail-label">{label}</p> : null}
       <div className="detail-value" style={style}>{children}</div>
     </section>
   );

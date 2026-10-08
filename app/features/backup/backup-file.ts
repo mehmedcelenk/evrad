@@ -51,3 +51,18 @@ export async function saveBackup(): Promise<BackupSaveResult> {
   download(file);
   return "downloaded";
 }
+
+export async function parseBackupFile(content: string): Promise<BackupEnvelope> {
+  const envelope = JSON.parse(content) as BackupEnvelope;
+  if (!envelope || envelope.format !== "zikirlerim-backup" || !envelope.payload) {
+    throw new Error("Invalid backup file format");
+  }
+  return envelope;
+}
+
+export async function restoreBackupFromFile(file: File) {
+  const text = await file.text();
+  const envelope = await parseBackupFile(text);
+  const { restoreBackupPayload } = await import("../../data/backup-repository");
+  return restoreBackupPayload(envelope.payload);
+}

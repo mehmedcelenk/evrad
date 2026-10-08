@@ -7,6 +7,10 @@ import type { DevotionalDraft, DevotionalItem, BookItem, EntityTemplate } from "
 import { saveBookWithAsset } from "../data/reader-repository";
 import { collectionRepository } from "../data/collection-repository";
 
+import { isV1CleanSeeded, resetAndSeedV1SinglePrayer } from "../data/v1-init";
+import { pushToSupabase } from "../data/supabase/sync-service";
+import { getSupabaseConfig } from "../data/supabase/supabase-config";
+
 // Commit writes before publishing state. Serialize local actions so two rapid
 // taps cannot overwrite each other's membership or editor changes.
 export const RecordLibraryContext = createContext<ReturnType<typeof useRecordLibraryState> | null>(null);
@@ -31,6 +35,13 @@ export function useRecordLibraryState(onError: () => void) {
   }, []);
 
   const reload = useCallback(async (isCurrent = () => mounted.current) => {
+    if (!isV1CleanSeeded()) {
+      try {
+        await resetAndSeedV1SinglePrayer();
+      } catch (err) {
+        console.error("V1 clean seed error:", err);
+      }
+    }
     const next = await collectionRepository.load();
     if (!isCurrent()) return;
     replaceEntries(next);
@@ -47,13 +58,35 @@ export function useRecordLibraryState(onError: () => void) {
       setReady(true);
       onError();
     });
-    return () => { active = false; mounted.current = false; };
+    const handleRefresh = () => {
+      void reload(() => active);
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("evrad:user-changed", handleRefresh);
+      window.addEventListener("evrad:synced", handleRefresh);
+    }
+    return () => {
+      active = false;
+      mounted.current = false;
+      if (typeof window !== "undefined") {
+        window.removeEventListener("evrad:user-changed", handleRefresh);
+        window.removeEventListener("evrad:synced", handleRefresh);
+      }
+    };
   }, [onError, reload]);
+
+  const triggerBackgroundSync = useCallback(() => {
+    const cfg = getSupabaseConfig();
+    if (cfg.autoSync && cfg.url && cfg.anonKey && cfg.syncKey) {
+      void pushToSupabase().catch(() => {});
+    }
+  }, []);
 
   const mutate = useCallback((operation: () => Promise<void>) => {
     const result = queue.current.then(async () => {
       try {
         await operation();
+        triggerBackgroundSync();
         return true;
       } catch {
         if (mounted.current) onError();
@@ -62,10 +95,10 @@ export function useRecordLibraryState(onError: () => void) {
     });
     queue.current = result;
     return result;
-  }, [onError]);
+  }, [onError, triggerBackgroundSync]);
 
   const publish = useCallback((entry: CollectionEntry) => {
-    const next = collectionEntry(entry.moduleId, entry.item, "favorites");
+    const next = collectionEntry(entry.moduleId, entry.item, "virds");
     const current = entriesRef.current;
     replaceEntries(current.some((item) => item.id === next.id)
       ? current.map((item) => item.id === next.id ? next : item)
@@ -74,7 +107,7 @@ export function useRecordLibraryState(onError: () => void) {
 
   return useMemo(() => {
     const update = (ref: RecordRef, changes: Partial<LibraryItem>) => mutate(async () => {
-      publish(collectionEntry(ref.moduleId, await collectionRepository.patch(ref, changes), "favorites"));
+      publish(collectionEntry(ref.moduleId, await collectionRepository.patch(ref, changes), "virds"));
     });
     const toggleMembership = (ref: RecordRef, collection: CollectionId, template?: EntityTemplate<DevotionalItem>) => mutate(async () => {
       const current = entriesRef.current.find((entry) => entry.id === recordKey(ref.moduleId, ref.itemId));
@@ -83,7 +116,7 @@ export function useRecordLibraryState(onError: () => void) {
       publish(collectionEntry(ref.moduleId, item, collection));
     });
     const create = (draft: DevotionalDraft) => mutate(async () => {
-      const item = { ...devotionalFromDraft("dhikr", draft, null, Date.now()), inVirds: true, liked: false };
+      const item = { ...devotionalFromDraft("dhikr", draft, null, Date.now()), inVirds: true, liked: true };
       await collectionRepository.create(item);
       publish(collectionEntry("dhikr", item, "virds"));
     });
@@ -98,8 +131,8 @@ export function useRecordLibraryState(onError: () => void) {
 
     const saveBook = (item: BookItem, file?: File) => mutate(async () => {
       await saveBookWithAsset(item, file);
-      publish(collectionEntry("books", item, "favorites"));
+      publish(collectionEntry("books", item, "virds"));
     });
-    return { saveBook, entries, ready, failed, update, toggleMembership, create, saveOrder };
-  }, [entries, ready, failed, mutate, publish, replaceEntries]);
+    return { reload: () => reload(), saveBook, entries, ready, failed, update, toggleMembership, create, saveOrder };
+  }, [entries, ready, failed, mutate, publish, replaceEntries, reload]);
 }

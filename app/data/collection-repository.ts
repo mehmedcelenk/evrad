@@ -10,7 +10,7 @@ async function load() {
   return runTransaction(stores, "readonly", async (transaction) => {
     const groups = await Promise.all(trackableModuleIds.map(async (moduleId) => {
       const items = await requestResult(transaction.objectStore(getEntityStore(moduleId)).getAll() as IDBRequest<LibraryItem[]>);
-      return items.map((item) => collectionEntry(moduleId, "name" in item ? { ...item, contexts: item.contexts ?? [], source: item.source ?? null } : item, "favorites"));
+      return items.map((item) => collectionEntry(moduleId, "name" in item ? { ...item, contexts: item.contexts ?? [], source: item.source ?? null } : item, "virds"));
     }));
     return groups.flat();
   });
