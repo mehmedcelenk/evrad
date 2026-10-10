@@ -14,9 +14,10 @@
   overscroll-behavior: contain;
 }
 .dialog-layer[open] { display: grid; place-items: center; }
+.quick-add-layer[open] { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 1rem 1rem max(1.2rem, env(safe-area-inset-bottom)); }
 .dialog-layer::backdrop { background: rgba(3, 4, 7, 0.72); }
 .dialog-surface { width: min(100%, 27rem); }
-.quick-add-layer .dialog-surface { width: min(100%, 30rem); }
+.quick-add-layer .dialog-surface { width: min(100%, 30rem); margin-bottom: auto; }
 .quick-add-layer::backdrop { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .editor-layer[open] { display: block; padding: 0; background: var(--background); }
 .editor-layer .dialog-surface { width: 100%; min-height: 100%; }

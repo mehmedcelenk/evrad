@@ -1,77 +1,35 @@
 .quick-add-card {
   width: min(100%, 30rem);
-  padding: 1.2rem;
+  padding: 0.75rem;
   border: 1px solid var(--line-strong);
   border-radius: 1.15rem;
-  background: rgba(22, 25, 32, 0.95);
-  box-shadow: 0 1.5rem 4.5rem rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04);
-}
-
-.quick-add-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.9rem;
-}
-
-.quick-add-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.quick-add-sparkle {
-  width: 0.95rem;
-  height: 0.95rem;
-  color: var(--light);
-}
-
-.quick-add-title {
-  margin: 0;
-  font-size: 0.82rem;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  color: var(--text-soft);
-  text-transform: uppercase;
-}
-
-.quick-add-close {
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin: -0.5rem -0.5rem -0.5rem 0;
-  border: 0;
-  border-radius: 0.5rem;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.quick-add-close svg {
-  width: 1.1rem;
-  height: 1.1rem;
-}
-
-.quick-add-close:hover {
-  color: var(--text);
+  background: rgba(20, 22, 28, 0.98);
+  box-shadow: 0 1.5rem 4.5rem rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .quick-add-body {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 0.5rem;
+}
+
+.quick-add-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .quick-add-input {
-  width: 100%;
-  min-height: 3.1rem;
-  padding: 0.75rem 1rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 2.85rem;
+  padding: 0.65rem 0.9rem;
   border: 1px solid var(--line);
   border-radius: 0.75rem;
   background: rgba(12, 14, 18, 0.85);
   color: var(--text);
-  font-size: 1.05rem;
+  font-size: 1rem;
   outline: none;
   transition: border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard);
 }
@@ -88,60 +46,48 @@
   direction: rtl;
 }
 
-.quick-add-actions {
+.quick-add-icon-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  flex-shrink: 0;
 }
 
-.quick-add-detail-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2.75rem;
-  padding: 0 0.85rem;
+.quick-add-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.85rem;
   border: 1px solid var(--line);
-  border-radius: 0.65rem;
-  background: transparent;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.035);
   color: var(--text-soft);
-  font-size: 0.82rem;
   cursor: pointer;
   touch-action: manipulation;
-  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
 }
 
-.quick-add-detail-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
+.quick-add-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text);
 }
 
-.quick-add-btn-icon {
-  width: 0.95rem;
-  height: 0.95rem;
-}
-
-.quick-add-save-btn {
-  min-height: 2.75rem;
-  padding: 0 1.25rem;
-  border: 0;
-  border-radius: 0.65rem;
+.quick-add-icon-btn.is-save {
   background: var(--light);
-  color: #121418;
-  font-size: 0.85rem;
-  font-weight: 650;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: opacity var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
+  border-color: var(--light);
+  color: #101216;
 }
 
-.quick-add-save-btn:disabled {
-  opacity: 0.4;
+.quick-add-icon-btn.is-save:disabled {
+  opacity: 0.35;
   cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: transparent;
+  color: var(--muted);
 }
 
-.quick-add-save-btn:not(:disabled):active {
-  transform: scale(0.97);
+.quick-add-icon-btn:not(:disabled):active {
+  transform: scale(0.95);
 }
+
 

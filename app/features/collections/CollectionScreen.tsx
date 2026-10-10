@@ -5,7 +5,8 @@ import { BookCreateScreen } from "../books/BookCreateScreen";
 import { useState } from "react";
 import { DeleteConfirmation } from "../../components/DeleteConfirmation";
 import { ModuleScreenHeader } from "../../components/ModuleScreenHeader";
-import { RecordFilters } from "../../components/RecordFilters";
+import { RecordCategoryChips } from "../../components/RecordCategoryChips";
+import { DevotionalContextChips } from "../../components/DevotionalContextChips";
 import { SortStatus } from "../../components/SortStatus";
 import { StorageLoading } from "../../components/StorageLoading";
 import { TrackableEmptyState } from "../../components/TrackableEmptyState";
@@ -47,7 +48,15 @@ export function CollectionScreen({ collection = "virds" }: { collection?: Collec
 
   return <>
     <TrackableModuleLayout
-      header={<ModuleScreenHeader title={t(labels.title)} eyebrow={t(labels.eyebrow)} tagline={t(labels.tagline)} filters={<RecordFilters filters={filters} />} />}
+      header={
+        <ModuleScreenHeader
+          title={t(labels.title)}
+          eyebrow={t(labels.eyebrow)}
+          tagline={labels.tagline ? t(labels.tagline) : undefined}
+          categoryFilters={<RecordCategoryChips includeBooks selected={filters.categories} onToggle={filters.toggleCategory} />}
+          filters={<DevotionalContextChips selected={filters.contexts} onToggle={filters.toggleContext} label={t("filter.contexts")} />}
+        />
+      }
       loading={!state.ready}
       hasItems={state.entries.length > 0}
       loadingState={<StorageLoading label={t("loading.generic", { module: t(labels.title) })} />}

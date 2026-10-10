@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 
-const title = "Virdlerim";
+const title = "Evrad";
 const description = "Zikir, dua, ezber, şiir ve okumalarını takip et; her gün yeni bir sayfa aç.";
 
 export async function generateMetadata(): Promise<Metadata> {

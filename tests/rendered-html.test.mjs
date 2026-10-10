@@ -12,7 +12,7 @@ async function render(pathname) {
 }
 
 test("canonical screens render accessible navigation and PWA metadata", async () => {
-  for (const [path, label] of [["/virdlerim", "Virdlerim"]]) {
+  for (const [path, label] of [["/virdlerim", "Evrad"]]) {
     const response = await render(path);
     assert.equal(response.status, 200, path);
     const html = await response.text();

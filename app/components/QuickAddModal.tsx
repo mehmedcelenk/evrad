@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { Sparkles, SlidersHorizontal, X } from "lucide-react";
+import { Check, SlidersHorizontal } from "lucide-react";
 import { draftFromText } from "../core/devotional-draft";
 import { t } from "../core/i18n";
 import type { DevotionalDraft } from "../core/types";
@@ -38,29 +38,27 @@ function QuickAddContent({ onClose, onOpenDetailed }: Omit<QuickAddModalProps, "
   if (detailed) return <RecordCreateScreen initialDraft={detailed} onClose={onClose} />;
   return <Dialog variant="quick-add" labelledBy={titleId} busy={pending} onClose={finish}>
     {(close) => <div className="quick-add-card">
-      <header className="quick-add-header">
-        <div className="quick-add-title-wrap">
-          <Sparkles className="quick-add-sparkle" aria-hidden="true" />
-          <h2 id={titleId} className="quick-add-title">{t("quickAdd.title")}</h2>
-        </div>
-        <button type="button" className="quick-add-close" onClick={close} disabled={pending} aria-label={t("action.cancel")}><X aria-hidden="true" /></button>
-      </header>
       <form className="quick-add-body" onSubmit={(event) => {
         event.preventDefault();
         setFailed(false);
         if (text.trim()) void run(async () => { await create(draft); close(); }).catch(() => setFailed(true));
       }}>
-        <input data-initial-focus type="text" className={`quick-add-input${draft.arabic ? " is-arabic" : ""}`}
-          value={text} onChange={(event) => setText(event.target.value)} placeholder={t("quickAdd.placeholder")}
-          aria-label={t("quickAdd.placeholder")} dir={draft.arabic ? "rtl" : "ltr"} autoComplete="off" disabled={pending} />
-        {failed ? <p className="form-error" role="alert">{t("toast.storageError")}</p> : null}
-        <div className="quick-add-actions">
-          <button type="button" className="quick-add-detail-btn" disabled={pending} onClick={() => { nextDraft.current = draft; close(); }}>
-            <SlidersHorizontal className="quick-add-btn-icon" aria-hidden="true" /><span>{t("quickAdd.detail")}</span>
-          </button>
-          <button type="submit" className="quick-add-save-btn" disabled={!text.trim() || pending}>{t("quickAdd.save")}</button>
+        <div className="quick-add-input-row">
+          <input data-initial-focus type="text" className={`quick-add-input${draft.arabic ? " is-arabic" : ""}`}
+            value={text} onChange={(event) => setText(event.target.value)} placeholder={t("quickAdd.placeholder")}
+            aria-label={t("quickAdd.placeholder")} dir={draft.arabic ? "rtl" : "ltr"} autoComplete="off" disabled={pending} />
+          <div className="quick-add-icon-actions">
+            <button type="button" className="quick-add-icon-btn" disabled={pending} onClick={() => { nextDraft.current = draft; close(); }} title={t("quickAdd.detail")} aria-label={t("quickAdd.detail")}>
+              <SlidersHorizontal size={18} aria-hidden="true" />
+            </button>
+            <button type="submit" className="quick-add-icon-btn is-save" disabled={!text.trim() || pending} title={t("quickAdd.save")} aria-label={t("quickAdd.save")}>
+              <Check size={20} aria-hidden="true" />
+            </button>
+          </div>
         </div>
+        {failed ? <p className="form-error" role="alert">{t("toast.storageError")}</p> : null}
       </form>
     </div>}
   </Dialog>;
 }
+
