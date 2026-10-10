@@ -129,6 +129,17 @@ button, label, input, textarea { -webkit-tap-highlight-color: transparent; }
   width: 100%;
 }
 
+.screen-heading-end {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.screen-heading-end .eyebrow {
+  margin: 0;
+}
+
 .screen-heading-title {
   margin: 0;
   font-family: Iowan Old Style, Baskerville, Georgia, serif;

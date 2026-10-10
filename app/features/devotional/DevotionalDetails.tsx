@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Volume2 } from "lucide-react";
+import { Volume2, Plus, Minus } from "lucide-react";
 import { DetailBlock, ExpandableCardContent } from "../../components/TrackerPrimitives";
 import { containsArabic } from "../../core/devotional-draft";
 import { t } from "../../core/i18n";
@@ -39,8 +39,12 @@ export function DevotionalDetails({
       {item.arabic ? (
         <DetailBlock className="arabic-detail">
           <div className="font-controls">
-            <button type="button" onClick={() => onChangeFont(-1)} aria-label={t("detail.fontSmaller")} disabled={fontLevel === 0}>−</button>
-            <button type="button" onClick={() => onChangeFont(1)} aria-label={t("detail.fontLarger")} disabled={fontLevel === 4}>+</button>
+            <button type="button" onClick={() => onChangeFont(-1)} aria-label={t("detail.fontSmaller")} title={t("detail.fontSmaller")} disabled={fontLevel === 0}>
+              <Minus size={16} strokeWidth={1.8} />
+            </button>
+            <button type="button" onClick={() => onChangeFont(1)} aria-label={t("detail.fontLarger")} title={t("detail.fontLarger")} disabled={fontLevel === 4}>
+              <Plus size={16} strokeWidth={1.8} />
+            </button>
             <button type="button" className="audio-v2-btn" title="Ses (v2)" aria-label="Ses dinle (v2)">
               <Volume2 size={16} strokeWidth={1.8} />
             </button>

@@ -14,6 +14,7 @@ import type { DevotionalItem, DevotionalModuleId } from "../../core/types";
 import { getDevotionalDisplay } from "../../core/devotional";
 import { DevotionalDetails } from "./DevotionalDetails";
 import { getRecordIcon } from "../../core/record-categories";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface DevotionalCardProps {
   cardId?: string;
@@ -70,8 +71,12 @@ export function DevotionalCard(props: DevotionalCardProps) {
         onChangeFont={props.onChangeFont}
         actions={(
           <footer className="card-actions">
-            <button type="button" className="edit-button" onClick={props.onEdit}>{t("action.edit")}</button>
-            <button type="button" className="danger-button" onClick={props.onRemoveFromCollections}>{t("collection.remove")}</button>
+            <button type="button" className="edit-button" onClick={props.onEdit} aria-label={t("action.edit")} title={t("action.edit")}>
+              <Pencil size={16} strokeWidth={1.8} />
+            </button>
+            <button type="button" className="danger-button" onClick={props.onRemoveFromCollections} aria-label={t("collection.remove")} title={t("collection.remove")}>
+              <Trash2 size={16} strokeWidth={1.8} />
+            </button>
           </footer>
         )}
       />

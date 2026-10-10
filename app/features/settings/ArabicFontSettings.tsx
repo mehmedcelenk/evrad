@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { useAppRuntime } from "../../core/AppRuntimeContext";
 import {
   ARABIC_FONTS,
@@ -131,7 +132,9 @@ function FontOptionRow({
           {isLoading ? (
             <span className="font-loading-spinner" />
           ) : (
-            <span className={`font-checkbox-box${isSelected ? " is-checked" : ""}`} />
+            <span className={`classic-checkbox-box${isSelected ? " is-checked" : ""}`}>
+              {isSelected ? <Check size={12} strokeWidth={3} /> : null}
+            </span>
           )}
         </div>
       </div>

@@ -7,7 +7,6 @@ export function SettingsScreen({ active = true }: { active?: boolean }) {
   return (
     <div className="module-screen settings-screen">
       <header className="screen-heading">
-        <p className="eyebrow">{t("settings.eyebrow")}</p>
         <div className="screen-heading-main">
           <h1>{t("settings.title")}</h1>
         </div>

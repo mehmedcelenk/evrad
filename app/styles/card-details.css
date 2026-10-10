@@ -14,14 +14,16 @@
 .details-copy { white-space: pre-line; }
 
 .arabic-detail .detail-label { margin-bottom: 0; }
-.font-controls { display: flex; align-items: center; gap: 0.5rem; margin: 0.4rem 0 0.8rem; }
-.font-controls button { min-width: 2.3rem; min-height: 2.3rem; padding: 0 0.65rem; border: 1px solid var(--line); border-radius: 0.65rem; background: rgba(255, 255, 255, 0.025); color: var(--text-soft); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; }
-.font-controls button:disabled { opacity: 0.28; cursor: default; }
-.font-controls .audio-v2-btn { margin-left: auto; border-color: rgba(255, 255, 255, 0.12); opacity: 0.65; transition: opacity 0.2s ease; }
-.font-controls .audio-v2-btn:hover { opacity: 1; }
+.font-controls { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin: 0.4rem 0 0.8rem; }
+.font-controls button { min-width: 2rem; min-height: 2rem; padding: 0.25rem; border: 0; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.15s ease, opacity 0.15s ease; }
+.font-controls button:hover { color: var(--text); }
+.font-controls button:disabled { opacity: 0.25; cursor: default; }
+.font-controls .audio-v2-btn { opacity: 0.65; transition: opacity 0.2s ease, color 0.2s ease; }
+.font-controls .audio-v2-btn:hover { opacity: 1; color: var(--text); }
 
-.card-actions { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 0.25rem 0.35rem; }
-.edit-button { min-height: 2.75rem; padding: 0 1rem; border: 1px solid var(--line); border-radius: 0.85rem; color: var(--text-soft); }
-.delete-button { display: grid; place-items: center; width: 2.75rem; min-height: 2.75rem; border: 1px solid rgba(255, 140, 136, 0.2); border-radius: 50%; background: var(--danger-surface); color: var(--danger); font-size: 1.25rem; }
+.card-actions { display: flex; justify-content: flex-end; align-items: center; gap: 0.6rem; padding: 0.75rem 0.25rem 0.25rem; }
+.card-actions button, .edit-button, .delete-button, .danger-button { min-width: 2.2rem; min-height: 2.2rem; padding: 0.35rem; border: 0; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; border-radius: 0.4rem; cursor: pointer; transition: color 0.15s ease; }
+.card-actions button:hover, .edit-button:hover { color: var(--text); }
+.card-actions .delete-button:hover, .card-actions .danger-button:hover { color: #ff6b6b; }
 
 .quiet-note { margin: 1.55rem 0 0; color: #6f7279; font-family: Iowan Old Style, Baskerville, Georgia, serif; font-size: 0.82rem; font-style: italic; text-align: center; }
