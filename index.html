@@ -1,4 +1,38 @@
 <!DOCTYPE html>
+<!--
+================================================================================
+AI AGENT / GEMINI CODING RULES & ARCHITECTURE GUIDE (AGENTS.MD)
+================================================================================
+1. CORE PHILOSOPHY:
+   - Zero-Build, No-Framework, 100% Native Single-File Architecture (index.html).
+   - NEVER introduce NPM packages, external build tools, Vite, or bundle steps.
+   - Offline-First: All persistent data lives in localStorage via deterministic Store.
+
+2. STRICT 4-LAYER STRUCTURE (DO NOT CROSS BOUNDARIES):
+   - Layer 1: CSS TOKENS & ATOMS (Use defined variables: --bg, --surface, --line,
+     --line-strong, --text, --muted, --aura, --font-ar. Avoid arbitrary inline styles).
+   - Layer 2: STORE & REPOSITORY (Deterministic state mutations & localStorage saves.
+     Store.state is the single source of truth; never mutate state outside Store).
+   - Layer 3: UI RENDERERS (Pure template string functions: renderCards, renderFilters,
+     renderSettings. They only read state and produce DOM strings).
+   - Layer 4: ACTIONS & DISPATCHER (window.Actions contains all user handlers.
+     Event listeners dispatch into Actions; Actions mutate Store and trigger renders).
+
+3. DATA ITEM SCHEMA (VIRD):
+   {
+     id: string, title: string, arabic_text?: string, translation?: string,
+     details?: string, source?: string, category?: string,
+     target_count?: number|null, target_unit?: string, card_font_level?: number(0..4),
+     completed: boolean, last_completed_date: string, updated_at?: string
+   }
+
+4. UX & DESIGN INTEGRITY:
+   - Preserve smooth spring accordion animations (grid-template-rows 0fr -> 1fr).
+   - Preserve Arabic typography controls (+/- size, Naskh & Google Font switcher).
+   - Unified Category system: User can type custom categories or add via (+) without
+     closing modals.
+================================================================================
+-->
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
