@@ -1,14 +1,10 @@
-const CACHE_NAME = "zikirlerim-shell-v21";
-const CORE_URLS = [
-  "/", "/virdlerim", "/virdlerim/yeni", "/canta", "/kesfet/canta",
-  "/kitaplar", "/kitaplar/yeni",
-  "/manifest.webmanifest", "/icon-192.png", "/icon-512.png",
-];
+const CACHE_NAME = "evrad-pwa-v22";
+const CORE_URLS = ["/", "/index.html", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(CORE_URLS))
+      .then((cache) => Promise.allSettled(CORE_URLS.map((url) => cache.add(url))))
       .then(() => self.skipWaiting()),
   );
 });
@@ -22,21 +18,14 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("message", (event) => {
-  if (event.data?.type === "SKIP_WAITING") {
-    self.skipWaiting();
-    return;
-  }
-  if (event.data?.type === "CACHE_URLS" && Array.isArray(event.data.urls)) {
-    const urls = [...new Set(event.data.urls)].filter((url) => {
-      try {
-        return new URL(url, self.location.origin).origin === self.location.origin;
-      } catch {
-        return false;
-      }
-    });
-    event.waitUntil(caches.open(CACHE_NAME).then((cache) => Promise.allSettled(urls.map((url) => cache.add(url)))));
-  }
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
+
+function cacheCopy(event, request, response) {
+  if (!response || response.status !== 200 || response.type !== "basic") return;
+  const copy = response.clone();
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)));
+}
 
 self.addEventListener("fetch", (event) => {
   const request = event.request;
@@ -48,27 +37,20 @@ self.addEventListener("fetch", (event) => {
     event.respondWith((async () => {
       try {
         const response = await fetch(request);
-        if (response.ok) {
-          event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone())));
-        }
+        cacheCopy(event, request, response);
         return response;
       } catch {
-        return (await caches.match(request, { ignoreSearch: true }))
-          ?? (await caches.match("/virdlerim"))
-          ?? (await caches.match("/"))
-          ?? Response.error();
+        return (await caches.match("/")) ?? (await caches.match("/index.html")) ?? Response.error();
       }
     })());
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then((cached) => cached ?? fetch(request).then((response) => {
-      if (response.ok) {
-        const copy = response.clone();
-        event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)));
-      }
-      return response;
-    })),
-  );
+  event.respondWith((async () => {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    const response = await fetch(request);
+    cacheCopy(event, request, response);
+    return response;
+  })());
 });

@@ -29,3 +29,4 @@ export const DEVOTIONAL_CONTEXTS: DevotionalContextOption[] = [
   { id: "protection", labelKey: "context.protection" },
   { id: "relief", labelKey: "context.relief" },
 ];
+

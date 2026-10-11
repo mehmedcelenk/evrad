@@ -36,3 +36,4 @@ export async function savePreferences(prefs: AppPreferences): Promise<void> {
     // Fail-safe
   }
 }
+

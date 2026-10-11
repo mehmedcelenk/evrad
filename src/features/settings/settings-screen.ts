@@ -190,3 +190,4 @@ export function bindSettingsScreenEvents(container: HTMLElement, store: AppStore
     }
   });
 }
+

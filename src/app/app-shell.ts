@@ -107,3 +107,4 @@ export function bindAppShellEvents(root: HTMLElement, store: AppStore): void {
     }
   });
 }
+

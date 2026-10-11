@@ -144,3 +144,4 @@ export function bindDhikrEditorEvents(container: HTMLElement, store: AppStore): 
     }
   });
 }
+

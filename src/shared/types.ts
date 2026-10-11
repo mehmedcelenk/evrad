@@ -54,3 +54,4 @@ export interface CollectionEntry {
   item: DevotionalItem;
   completedToday?: boolean;
 }
+

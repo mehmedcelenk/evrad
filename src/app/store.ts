@@ -72,3 +72,4 @@ export class AppStore {
     return () => this.listeners.delete(fn);
   }
 }
+

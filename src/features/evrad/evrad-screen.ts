@@ -125,3 +125,4 @@ export function bindEvradScreenEvents(container: HTMLElement, store: AppStore): 
     }
   });
 }
+

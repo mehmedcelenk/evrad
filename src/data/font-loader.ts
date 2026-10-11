@@ -20,3 +20,4 @@ export function loadArabicFont(id: ArabicFontId): void {
   };
   document.head.appendChild(link);
 }
+

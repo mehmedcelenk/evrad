@@ -51,3 +51,4 @@ export function bindDeleteDialogEvents(container: HTMLElement, store: AppStore):
     }
   });
 }
+

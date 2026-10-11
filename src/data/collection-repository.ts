@@ -42,3 +42,4 @@ export async function saveDhikr(item: DevotionalItem): Promise<DevotionalItem> {
 export async function deleteDhikr(id: string): Promise<void> {
   await runTransaction(DHIKR_STORE, "readwrite", (tx) => tx.objectStore(DHIKR_STORE).delete(id));
 }
+

@@ -1,5 +1,5 @@
 const DB_NAME = "zikirlerim";
-const DB_VERSION = 9;
+const DB_VERSION = 10;
 export const DHIKR_STORE = "dhikr";
 export const COMPLETION_STORE = "completions";
 export const PREFERENCES_STORE = "preferences";
@@ -47,7 +47,7 @@ export function openDatabase(): Promise<IDBDatabase> {
     let settled = false;
     let blockedTimeout: number | undefined;
 
-    request.onupgradeneeded = () => {
+    request.onupgradeneeded = (event) => {
       const database = request.result;
       if (!database.objectStoreNames.contains(DHIKR_STORE)) {
         database.createObjectStore(DHIKR_STORE, { keyPath: "id" });
@@ -59,6 +59,34 @@ export function openDatabase(): Promise<IDBDatabase> {
       }
       if (!database.objectStoreNames.contains(PREFERENCES_STORE)) {
         database.createObjectStore(PREFERENCES_STORE, { keyPath: "id" });
+      }
+
+      // Migrate legacy records if upgrading
+      const tx = request.transaction;
+      if (tx) {
+        const legacyStoreNames = ["dhikrs", "prayers", "dualar"].filter((name) => database.objectStoreNames.contains(name));
+        for (const storeName of legacyStoreNames) {
+          const store = tx.objectStore(storeName);
+          const cursorReq = store.openCursor();
+          cursorReq.onsuccess = () => {
+            const cursor = cursorReq.result;
+            if (cursor) {
+              const val = cursor.value;
+              if (val && val.id) {
+                try {
+                  tx.objectStore(DHIKR_STORE).put({
+                    ...val,
+                    category: val.category || "dhikr",
+                    inVirds: val.inVirds ?? true,
+                  });
+                } catch {
+                  // Ignore duplication
+                }
+              }
+              cursor.continue();
+            }
+          };
+        }
       }
     };
 

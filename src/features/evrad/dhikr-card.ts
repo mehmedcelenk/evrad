@@ -132,3 +132,4 @@ export function bindCardEvents(container: HTMLElement, store: AppStore): void {
     }
   });
 }
+

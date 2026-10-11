@@ -91,3 +91,4 @@ export function bindQuickAddEvents(container: HTMLElement, store: AppStore): voi
     });
   }
 }
+

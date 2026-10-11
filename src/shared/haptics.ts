@@ -6,3 +6,4 @@ export function triggerHaptic(enabled = true, durationMs = 15): void {
     // Ignore unsupported device errors
   }
 }
+

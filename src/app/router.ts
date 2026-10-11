@@ -24,3 +24,4 @@ export function navigateTo(target: NavigationTarget): void {
     window.location.hash = "virds";
   }
 }
+

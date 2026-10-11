@@ -59,3 +59,4 @@ export function formatArabicDiacritics(text: string, showDiacritics: boolean): s
 export function findArabicFont(id: ArabicFontId): ArabicFontDefinition {
   return ARABIC_FONTS.find((font) => font.id === id) ?? ARABIC_FONTS[0];
 }
+
