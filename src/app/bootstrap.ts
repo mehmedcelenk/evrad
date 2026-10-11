@@ -27,7 +27,7 @@ export async function bootstrapApp(rootId = "app"): Promise<void> {
   function render() {
     const currentRoot = document.getElementById(rootId);
     if (!currentRoot) return;
-    currentRoot.innerHTML = renderAppShell(store);
+    currentRoot.innerHTML = renderAppShell(store).value;
     bindAppShellEvents(currentRoot, store);
   }
 

@@ -1,12 +1,12 @@
-import { html } from "../../shared/safe-html";
+import { html, raw, type RawHtml } from "../../shared/safe-html";
 import type { DevotionalItem } from "../../shared/types";
 import type { AppStore } from "../../app/store";
 import { saveDhikr } from "../../data/collection-repository";
 import { t } from "../../shared/i18n";
 import { triggerHaptic } from "../../shared/haptics";
 
-export function renderDhikrEditorModal(item: DevotionalItem | null): string {
-  if (!item) return "";
+export function renderDhikrEditorModal(item: DevotionalItem | null): RawHtml {
+  if (!item) return raw("");
 
   const isEdit = Boolean(item.id && !item.id.startsWith("dhikr-"));
 

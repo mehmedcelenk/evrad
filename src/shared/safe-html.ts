@@ -21,7 +21,7 @@ export function isRawHtml(value: unknown): value is RawHtml {
   return typeof value === "object" && value !== null && "__raw" in value && (value as RawHtml).__raw === true;
 }
 
-export function html(strings: TemplateStringsArray, ...values: unknown[]): string {
+export function html(strings: TemplateStringsArray, ...values: unknown[]): RawHtml {
   let result = strings[0];
   for (let i = 0; i < values.length; i++) {
     const val = values[i];
@@ -34,6 +34,6 @@ export function html(strings: TemplateStringsArray, ...values: unknown[]): strin
     }
     result += strings[i + 1];
   }
-  return result;
+  return raw(result);
 }
 

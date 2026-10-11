@@ -1,12 +1,12 @@
-import { html } from "../../shared/safe-html";
+import { html, raw, type RawHtml } from "../../shared/safe-html";
 import type { DevotionalItem } from "../../shared/types";
 import type { AppStore } from "../../app/store";
 import { deleteDhikr } from "../../data/collection-repository";
 import { t } from "../../shared/i18n";
 import { triggerHaptic } from "../../shared/haptics";
 
-export function renderDeleteDialogModal(item: DevotionalItem | null): string {
-  if (!item) return "";
+export function renderDeleteDialogModal(item: DevotionalItem | null): RawHtml {
+  if (!item) return raw("");
 
   const title = item.name || item.arabic || "";
 

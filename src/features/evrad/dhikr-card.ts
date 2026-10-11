@@ -1,13 +1,13 @@
 import { formatArabicDiacritics } from "../../shared/arabic-fonts";
 import { icons } from "../../shared/icons";
-import { html, raw } from "../../shared/safe-html";
+import { html, raw, type RawHtml } from "../../shared/safe-html";
 import type { DevotionalItem } from "../../shared/types";
 import type { AppStore } from "../../app/store";
 import { toggleCompletion } from "../../data/completion-repository";
 import { triggerHaptic } from "../../shared/haptics";
 import { saveDhikr } from "../../data/collection-repository";
 
-export function renderDhikrCard(item: DevotionalItem, store: AppStore): string {
+export function renderDhikrCard(item: DevotionalItem, store: AppStore): RawHtml {
   const state = store.getState();
   const isCompleted = state.completions.has(item.id);
   const isExpanded = state.expandedIds.has(item.id);

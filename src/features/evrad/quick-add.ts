@@ -1,10 +1,10 @@
 import { icons } from "../../shared/icons";
-import { html, raw } from "../../shared/safe-html";
+import { html, raw, type RawHtml } from "../../shared/safe-html";
 import type { AppStore } from "../../app/store";
 import { saveDhikr } from "../../data/collection-repository";
 import { triggerHaptic } from "../../shared/haptics";
 
-export function renderQuickAddBar(): string {
+export function renderQuickAddBar(): RawHtml {
   return html`
     <div class="quick-add-layer">
       <div class="quick-add-bar">

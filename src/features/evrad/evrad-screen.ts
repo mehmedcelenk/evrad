@@ -1,12 +1,12 @@
 import { icons } from "../../shared/icons";
-import { html, raw } from "../../shared/safe-html";
+import { html, raw, type RawHtml } from "../../shared/safe-html";
 import type { DevotionalCategory, DevotionalContext } from "../../shared/types";
 import type { AppStore } from "../../app/store";
 import { DEVOTIONAL_CONTEXTS, RECORD_CATEGORIES } from "../../shared/record-categories";
 import { t } from "../../shared/i18n";
 import { bindCardEvents, renderDhikrCard } from "./dhikr-card";
 
-export function renderEvradScreen(store: AppStore): string {
+export function renderEvradScreen(store: AppStore): RawHtml {
   const state = store.getState();
 
   // Filter entries
@@ -86,7 +86,7 @@ export function renderEvradScreen(store: AppStore): string {
 
       <div class="dhikr-card-list" id="dhikr-card-list">
         ${visibleEntries.length > 0
-          ? visibleEntries.map((item) => renderDhikrCard(item, store)).join("")
+          ? visibleEntries.map((item) => renderDhikrCard(item, store))
           : html`<p class="filter-empty">${t("empty.simple")}</p>`}
       </div>
     </div>

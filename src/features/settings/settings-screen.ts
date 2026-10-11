@@ -1,12 +1,12 @@
 import { ARABIC_FONTS, ARABIC_FONT_SAMPLE, formatArabicDiacritics } from "../../shared/arabic-fonts";
 import { icons } from "../../shared/icons";
-import { html, raw } from "../../shared/safe-html";
+import { html, raw, type RawHtml } from "../../shared/safe-html";
 import type { ArabicFontId } from "../../shared/types";
 import type { AppStore } from "../../app/store";
 import { triggerHaptic } from "../../shared/haptics";
 import { t } from "../../shared/i18n";
 
-export function renderSettingsScreen(store: AppStore): string {
+export function renderSettingsScreen(store: AppStore): RawHtml {
   const state = store.getState();
   const prefs = state.preferences;
   const sampleText = formatArabicDiacritics(ARABIC_FONT_SAMPLE, prefs.showDiacritics);
@@ -125,7 +125,7 @@ export function renderSettingsScreen(store: AppStore): string {
                   </div>
                 </button>
               `;
-            }).join("")}
+            })}
           </div>
         </section>
 

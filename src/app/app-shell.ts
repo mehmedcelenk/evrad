@@ -1,5 +1,5 @@
 import { icons } from "../shared/icons";
-import { html, raw } from "../shared/safe-html";
+import { html, raw, type RawHtml } from "../shared/safe-html";
 import type { AppStore } from "./store";
 import { bindEvradScreenEvents, renderEvradScreen } from "../features/evrad/evrad-screen";
 import { bindSettingsScreenEvents, renderSettingsScreen } from "../features/settings/settings-screen";
@@ -9,7 +9,7 @@ import { bindDeleteDialogEvents, renderDeleteDialogModal } from "../features/edi
 import { navigateTo } from "./router";
 import { t } from "../shared/i18n";
 
-export function renderAppShell(store: AppStore): string {
+export function renderAppShell(store: AppStore): RawHtml {
   const state = store.getState();
   const isVirds = state.activeSection === "virds";
   const isSettings = state.activeSection === "settings";
