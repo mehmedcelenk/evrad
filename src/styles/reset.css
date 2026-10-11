@@ -1,0 +1,11 @@
+/* Minimal browser reset (replaces the former Tailwind preflight). Keep element selectors only. */
+*, ::before, ::after { border: 0 solid; }
+h1, h2, h3, h4, h5, h6 { margin: 0; font-size: inherit; font-weight: inherit; }
+p, ul, ol, figure, fieldset { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { padding: 0; background: transparent; cursor: pointer; }
+svg { display: block; }
+input, textarea, select { margin: 0; font: inherit; color: inherit; }
+dialog { color: inherit; }
+

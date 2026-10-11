@@ -166,12 +166,11 @@ export function bindSettingsScreenEvents(container: HTMLElement, store: AppStore
     }
   });
 
-  container.addEventListener("input", (event) => {
+  container.addEventListener("change", (event) => {
     const input = event.target as HTMLInputElement;
     const settingKey = input.getAttribute("data-setting");
     if (!settingKey) return;
 
-    const state = store.getState();
     if (settingKey === "fontSizeScale") {
       const value = Number(input.value);
       store.setState((prev) => ({

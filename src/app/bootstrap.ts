@@ -27,8 +27,13 @@ export async function bootstrapApp(rootId = "app"): Promise<void> {
   function render() {
     const currentRoot = document.getElementById(rootId);
     if (!currentRoot) return;
+    const scrollY = window.scrollY;
     currentRoot.innerHTML = renderAppShell(store).value;
-    bindAppShellEvents(currentRoot, store);
+    const shell = currentRoot.querySelector(".app-shell") as HTMLElement | null;
+    if (shell) {
+      bindAppShellEvents(shell, store);
+    }
+    window.scrollTo(0, scrollY);
   }
 
   // Initial render
