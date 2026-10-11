@@ -4,75 +4,224 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Evrad</title>
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="theme-color" content="#07080b" />
-  <link rel="manifest" href="/manifest.webmanifest" />
+  <!-- Google Fonts for Arabic & UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600&family=Noto+Naskh+Arabic:wght@400;700&family=Readex+Pro:wght@400;600&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
-    @font-face {
-      font-family: "Noto Naskh Arabic";
-      src: url("/fonts/NotoNaskhArabic-Regular.ttf") format("truetype");
-      font-weight: 400; font-display: swap;
-    }
     :root {
-      color-scheme: dark; --bg: #07080b; --surface: rgba(20,22,27,0.92); --surface-soft: #12141a;
-      --line: rgba(255,255,255,0.085); --line-strong: rgba(255,253,239,0.24);
-      --text: #f5f2ea; --text-soft: #c8c4b9; --muted: #8d9098; --aura: rgba(255,250,220,0.22);
+      color-scheme: dark;
+      --bg: #07080b;
+      --surface: rgba(20, 22, 27, 0.88);
+      --surface-elevated: #17191f;
+      --surface-soft: #101217;
+      --line: rgba(255, 255, 255, 0.085);
+      --line-strong: rgba(255, 253, 239, 0.22);
+      --text: #f5f2ea;
+      --text-soft: #c8c4b9;
+      --muted: #8d9098;
+      --muted-deep: #676a72;
+      --aura: rgba(255, 250, 220, 0.24);
+      --danger: #ff9b98;
+      --shadow: rgba(0, 0, 0, 0.48);
       --font-ar: "Noto Naskh Arabic", Arial, sans-serif;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; border: 0; touch-action: manipulation; }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; min-height: 100vh; overflow-x: hidden; padding-bottom: 5.5rem; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 6rem;
+    }
+
+    /* Ambient Glows */
     .ambient { position: fixed; border-radius: 50%; filter: blur(75px); pointer-events: none; z-index: 0; }
     .amb-1 { top: -4rem; left: 15%; width: 14rem; height: 14rem; background: rgba(85,95,140,0.18); }
     .amb-2 { top: 25%; right: -5rem; width: 16rem; height: 16rem; background: rgba(55,115,100,0.14); }
-    
-    .shell { position: relative; z-index: 1; max-width: 42rem; margin: 0 auto; padding: 1.25rem 1rem; }
-    header.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
-    .title-h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
-    .top-end { display: flex; align-items: center; gap: 0.6rem; }
-    .eyebrow { font-size: 0.88rem; color: var(--muted); font-family: "Noto Kufi Arabic", var(--font-ar); }
-    .icon-btn { background: transparent; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0.35rem; border-radius: 0.4rem; transition: color 0.15s; }
+
+    .shell { position: relative; z-index: 1; max-width: 44rem; margin: 0 auto; padding: 1.25rem 1rem; }
+
+    /* Top Heading */
+    header.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.15rem; }
+    .title-h1 { font-size: 1.65rem; font-weight: 700; letter-spacing: -0.02em; }
+    .top-end { display: flex; align-items: center; gap: 0.75rem; }
+    .eyebrow { font-size: 0.95rem; color: var(--muted); font-family: "Noto Kufi Arabic", var(--font-ar); }
+    .icon-btn {
+      background: transparent; color: var(--muted); cursor: pointer; display: inline-flex;
+      align-items: center; justify-content: center; padding: 0.35rem; border-radius: 0.4rem; transition: color 0.15s;
+    }
     .icon-btn:hover { color: var(--text); }
 
-    /* Category bar */
-    .cat-bar { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.85rem; scrollbar-width: none; }
-    .cat-pill { background: var(--surface-soft); border: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 999px; cursor: pointer; white-space: nowrap; transition: 0.15s; }
+    /* Category Filter Dropdown Bar */
+    .filter-wrap { margin-bottom: 1.15rem; }
+    .cat-bar { display: flex; gap: 0.45rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; }
+    .cat-pill {
+      background: var(--surface-soft); border: 1px solid var(--line); color: var(--muted);
+      font-size: 0.8rem; padding: 0.38rem 0.85rem; border-radius: 999px; cursor: pointer;
+      white-space: nowrap; transition: 0.15s; display: inline-flex; align-items: center; gap: 0.35rem;
+    }
     .cat-pill.is-active { background: rgba(255,255,255,0.08); border-color: var(--line-strong); color: var(--text); }
 
     /* Cards */
     .card-list { display: grid; gap: 0.75rem; }
-    article.card { background: linear-gradient(145deg, rgba(24,26,32,0.9), rgba(13,15,19,0.94)); border: 1px solid var(--line); border-radius: 0.95rem; box-shadow: 0 0.8rem 2.2rem -1.5rem rgba(0,0,0,0.6); transition: 0.2s; }
-    article.card.is-done { border-color: var(--line-strong); box-shadow: 0 0 2rem -0.8rem var(--aura); }
-    .card-row { display: grid; grid-template-columns: 2.75rem 1fr 2.75rem; align-items: center; min-height: 4.2rem; }
-    .card-marker { text-align: center; font-size: 1.15rem; }
-    .card-body { cursor: pointer; padding: 0.4rem 0.2rem; overflow: hidden; }
-    .card-title { font-size: 0.96rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-preview-ar { font-family: var(--font-ar); direction: rtl; font-size: 0.88rem; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.2rem; }
-    .check-btn { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; cursor: pointer; margin: 0 auto; color: var(--muted); transition: 0.2s; }
-    .check-dot { width: 1.15rem; height: 1.15rem; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.22); display: grid; place-items: center; transition: 0.2s; }
-    article.card.is-done .check-dot { background: var(--text); border-color: var(--text); color: #000; box-shadow: 0 0 10px var(--aura); }
-    
-    /* Card detail */
-    .card-details { display: none; padding: 0.4rem 1rem 0.85rem; border-top: 1px solid var(--line); font-size: 0.92rem; }
-    article.card[data-open="true"] .card-details { display: block; }
-    .ar-block { font-family: var(--font-ar); direction: rtl; text-align: right; font-size: calc(1.15rem * var(--f-scale, 1)); line-height: var(--f-lh, 1.8); margin: 0.75rem 0; }
-    .tr-block { color: var(--text-soft); font-size: 0.86rem; line-height: 1.5; margin-bottom: 0.6rem; }
-    .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 0.8rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
-    .counter-badge { font-size: 0.8rem; color: var(--muted); }
+    article.trackable-card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 0.95rem;
+      background: linear-gradient(145deg, rgba(24, 26, 32, 0.9), rgba(13, 15, 19, 0.94));
+      box-shadow: 0 1.1rem 2.8rem -2rem var(--shadow);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    article.trackable-card.is-complete {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 2.8rem -1.15rem rgba(255, 252, 232, 0.25), 0 1.1rem 2.8rem -2rem var(--shadow);
+    }
+    .card-top-badges {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 0.95rem 0.2rem; min-height: 1.8rem;
+    }
+    .card-badge-marker { font-size: 1.15rem; line-height: 1; }
+    .target-chip {
+      font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line);
+      padding: 0.15rem 0.5rem; border-radius: 999px; background: rgba(255,255,255,0.03);
+    }
 
-    /* Bottom bar */
-    nav.bottom-bar { position: fixed; left: 50%; bottom: calc(0.85rem + env(safe-area-inset-bottom)); transform: translateX(-50%); background: rgba(18,20,25,0.96); border: 1px solid var(--line); border-radius: 0.62rem; padding: 0.35rem 0.6rem; display: flex; gap: 0.6rem; z-index: 30; box-shadow: 0 1rem 3rem rgba(0,0,0,0.6); }
+    .card-collapsed-row {
+      display: grid; grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+      align-items: center; min-height: 4.1rem;
+    }
+    .card-main {
+      border: 0; background: transparent; color: inherit; text-align: left;
+      cursor: pointer; padding: 0.25rem 0.35rem; overflow: hidden;
+    }
+    .card-title {
+      font-size: 0.98rem; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .card-preview-arabic {
+      font-family: var(--font-ar); direction: rtl; font-size: 0.9rem; color: var(--text-soft);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.25rem;
+    }
 
-    /* Dialogs */
-    dialog { margin: auto; background: #13151b; color: var(--text); border: 1px solid var(--line-strong); border-radius: 1rem; padding: 1.2rem; width: min(92vw, 26rem); box-shadow: 0 2rem 5rem rgba(0,0,0,0.8); }
-    dialog::backdrop { background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); }
+    /* Completion Light */
+    .completion-light {
+      display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+      border: 0; background: transparent; cursor: pointer; margin: 0 auto;
+    }
+    .completion-core {
+      width: 1.25rem; height: 1.25rem; border-radius: 0.35rem;
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      display: grid; place-items: center; transition: 0.2s;
+    }
+    article.trackable-card.is-complete .completion-core {
+      background: #ffffff; border-color: #ffffff; color: #000000;
+      box-shadow: 0 0 12px var(--aura);
+    }
+
+    /* Card Details / Accordion */
+    .card-details {
+      display: none; margin: 0 0.85rem 0.85rem; padding: 0.4rem 0.4rem 0.2rem;
+      border-top: 1px solid var(--line);
+    }
+    article.trackable-card[data-open="true"] .card-details { display: block; }
+    .detail-block { padding: 0.85rem 0.2rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .detail-label {
+      color: var(--muted-deep); font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem;
+    }
+    .arabic-text {
+      font-family: var(--font-ar); direction: rtl; text-align: right;
+      font-size: calc(1.2rem * var(--f-scale, 1)); line-height: var(--f-lh, 1.8);
+      white-space: pre-wrap; word-break: normal;
+    }
+    .translation-text { color: var(--text-soft); font-size: 0.92rem; line-height: 1.65; }
+
+    .card-actions { display: flex; justify-content: flex-end; gap: 0.75rem; padding: 0.75rem 0.25rem 0.25rem; }
+
+    /* Bottom Navigation */
+    nav.bottom-navigation {
+      position: fixed; left: 50%; bottom: calc(0.85rem + env(safe-area-inset-bottom));
+      transform: translateX(-50%); background: rgba(18, 20, 25, 0.96);
+      border: 1px solid var(--line); border-radius: 0.62rem; padding: 0.34rem 0.6rem;
+      display: flex; gap: 0.65rem; z-index: 35; box-shadow: 0 1rem 3.5rem rgba(0,0,0,0.5);
+    }
+    .bottom-btn {
+      min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent;
+      color: var(--muted); border-radius: 0.5rem; display: grid; place-items: center;
+      cursor: pointer; transition: color 0.15s, background 0.15s;
+    }
+    .bottom-btn:hover { color: var(--text); }
+    .bottom-btn.is-active { color: var(--text); background: rgba(255,255,255,0.06); }
+
+    /* Screens / Dialogs */
+    .screen-view { display: none; }
+    .screen-view.is-visible { display: block; }
+
+    /* Settings Screen Stack (Birebir Orijinal Tasarım) */
+    .settings-stack { display: flex; flex-direction: column; gap: 1.4rem; }
+    .settings-flat-group { display: flex; flex-direction: column; }
+    .settings-flat-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      min-height: 3.4rem; padding: 0.5rem 0.2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .settings-flat-label { font-size: 0.95rem; font-weight: 500; color: var(--text); }
+    .settings-slider-wrap { display: flex; align-items: center; justify-content: flex-end; width: min(100%, 12.5rem); }
+    .settings-slider {
+      width: 100%; height: 2.5rem; background: transparent; cursor: pointer; outline: none; -webkit-appearance: none;
+    }
+    .settings-slider::-webkit-slider-runnable-track {
+      width: 100%; height: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.16);
+    }
+    .settings-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 1.25rem; height: 1.25rem; margin-top: -8px;
+      border-radius: 999px; background: #a0a0a0; border: 2px solid var(--surface);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.15); cursor: pointer;
+    }
+    .classic-checkbox-box {
+      width: 1.25rem; height: 1.25rem; border-radius: 0.3rem; border: 1.5px solid rgba(255, 255, 255, 0.28);
+      background: transparent; display: flex; align-items: center; justify-content: center;
+      color: #000; cursor: pointer; transition: 0.15s;
+    }
+    .classic-checkbox-box.is-checked { border-color: #fff; background: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.25); }
+
+    .settings-time-input {
+      min-height: 2.75rem; padding: 0.35rem 0.75rem; border: 1px solid var(--line);
+      border-radius: 0.65rem; background: rgba(255, 255, 255, 0.04); color: var(--text-soft);
+      font-family: inherit; font-size: 1.02rem; font-weight: 550; outline: none; cursor: pointer;
+    }
+
+    /* Font List */
+    .font-row-list { display: flex; flex-direction: column; margin-top: 0.8rem; }
+    .font-row-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.85rem;
+      width: 100%; min-height: 3.25rem; padding: 0.65rem 0.2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      background: transparent; color: var(--text); text-align: left; cursor: pointer;
+    }
+    .font-row-item.is-selected .font-row-name { color: #ffffff; }
+    .font-row-name { font-size: 0.94rem; font-weight: 550; color: var(--text-soft); }
+    .font-row-style { font-size: 0.72rem; color: var(--muted-deep); }
+    .font-row-sample { font-size: clamp(1.2rem, 4.2vw, 1.38rem); line-height: 1; color: var(--text-soft); direction: rtl; }
+
+    /* Modal Dialog */
+    dialog {
+      margin: auto; background: #13151b; color: var(--text); border: 1px solid var(--line-strong);
+      border-radius: 1rem; padding: 1.25rem; width: min(92vw, 26rem); box-shadow: 0 2rem 5rem rgba(0,0,0,0.8);
+    }
+    dialog::backdrop { background: rgba(0,0,0,0.68); backdrop-filter: blur(4px); }
     .dialog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .form-group { margin-bottom: 0.85rem; }
-    .form-group label { display: block; font-size: 0.76rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.3rem; letter-spacing: 0.05em; }
-    input, textarea, select { width: 100%; background: var(--surface-soft); border: 1px solid var(--line); color: var(--text); padding: 0.55rem 0.75rem; border-radius: 0.5rem; font-size: 0.9rem; }
+    .form-group label { display: block; font-size: 0.76rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.35rem; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; background: var(--surface-soft); border: 1px solid var(--line); color: var(--text);
+      padding: 0.6rem 0.75rem; border-radius: 0.5rem; font-size: 0.92rem;
+    }
     input:focus, textarea:focus { border-color: var(--line-strong); outline: none; }
-    .btn-row { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.1rem; }
-    .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.88rem; cursor: pointer; }
+    .btn-row { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.2rem; }
+    .btn { padding: 0.55rem 1.1rem; border-radius: 0.5rem; font-size: 0.88rem; cursor: pointer; }
     .btn-primary { background: var(--text); color: #000; font-weight: 600; }
     .btn-secondary { background: rgba(255,255,255,0.08); color: var(--text); }
     .btn-danger { background: rgba(255,80,80,0.15); color: #ff8888; }
@@ -81,46 +230,121 @@
 <body>
   <div class="ambient amb-1"></div><div class="ambient amb-2"></div>
   <main class="shell">
-    <header class="top-bar">
-      <h1 class="title-h1">Evrad</h1>
-      <div class="top-end">
-        <p class="eyebrow">Bismillah</p>
-        <button class="icon-btn" id="btn-settings" title="Ayarlar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-    </header>
+    
+    <!-- 1. VIRDLER EKRANI -->
+    <div id="screen-virds" class="screen-view is-visible">
+      <header class="top-bar">
+        <h1 class="title-h1">Evrad</h1>
+        <div class="top-end">
+          <p class="eyebrow">Bismillah</p>
+          <button class="icon-btn" id="btn-toggle-filters" title="Filtreler">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
+      </header>
 
-    <div class="cat-bar" id="cat-bar">
-      <button class="cat-pill is-active" data-cat="all">Tümü</button>
-      <button class="cat-pill" data-cat="zikir">📿 Zikir</button>
-      <button class="cat-pill" data-cat="dua">🤲 Dua</button>
-      <button class="cat-pill" data-cat="salavat">📜 Salavat</button>
+      <div class="filter-wrap" id="filter-dropdown" style="display:none;">
+        <div class="cat-bar">
+          <button class="cat-pill is-active" data-cat="all">Tümü</button>
+          <button class="cat-pill" data-cat="dhikr">📿 Zikir</button>
+          <button class="cat-pill" data-cat="prayer">🤲 Dua</button>
+          <button class="cat-pill" data-cat="salavat">📜 Salavat</button>
+        </div>
+      </div>
+
+      <section class="card-list" id="card-list"></section>
     </div>
 
-    <section class="card-list" id="card-list"></section>
+    <!-- 2. AYARLAR EKRANI (TAM LİSTE) -->
+    <div id="screen-settings" class="screen-view">
+      <header class="top-bar">
+        <h1 class="title-h1">Ayarlar</h1>
+      </header>
+
+      <div class="settings-stack">
+        <div class="settings-flat-group">
+          <!-- Font Boyutu -->
+          <div class="settings-flat-row">
+            <label class="settings-flat-label">Arapça Metin Boyutu</label>
+            <div class="settings-slider-wrap">
+              <input type="range" min="0.75" max="1.5" step="0.05" id="set-fscale" class="settings-slider" />
+            </div>
+          </div>
+
+          <!-- Satır Yüksekliği -->
+          <div class="settings-flat-row">
+            <label class="settings-flat-label">Arapça Satır Yüksekliği</label>
+            <div class="settings-slider-wrap">
+              <input type="range" min="1.3" max="2.6" step="0.05" id="set-flh" class="settings-slider" />
+            </div>
+          </div>
+
+          <!-- Mealleri Göster -->
+          <div class="settings-flat-row" id="row-show-translations" style="cursor:pointer">
+            <span class="settings-flat-label">Türkçe Mealleri Göster</span>
+            <div class="classic-checkbox-box" id="chk-translations">✓</div>
+          </div>
+
+          <!-- Harekeleri Göster -->
+          <div class="settings-flat-row" id="row-show-diacritics" style="cursor:pointer">
+            <span class="settings-flat-label">Harekeleri Göster</span>
+            <div class="classic-checkbox-box" id="chk-diacritics">✓</div>
+          </div>
+
+          <!-- Titreşim -->
+          <div class="settings-flat-row" id="row-haptic" style="cursor:pointer">
+            <span class="settings-flat-label">Dokunmatik Titreşim</span>
+            <div class="classic-checkbox-box" id="chk-haptic">✓</div>
+          </div>
+
+          <!-- Sıfırlama Saati -->
+          <div class="settings-flat-row">
+            <label class="settings-flat-label">Gün Sıfırlama Saati</label>
+            <input type="time" id="set-reset-time" class="settings-time-input" value="00:00" />
+          </div>
+        </div>
+
+        <!-- Arapça Yazı Tipleri -->
+        <div>
+          <h2 style="font-size:1.05rem; font-weight:550; margin-bottom:0.6rem;">Arapça Yazı Tipi</h2>
+          <div class="font-row-list" id="font-list"></div>
+        </div>
+
+        <footer style="text-align:center; padding:1.5rem 0;">
+          <a href="mailto:mehmedcelenk@gmail.com" style="color:var(--muted); font-size:0.88rem; text-decoration:none;">mehmedcelenk@gmail.com</a>
+        </footer>
+      </div>
+    </div>
+
   </main>
 
-  <nav class="bottom-bar">
-    <button class="icon-btn" id="btn-virds" title="Tümü">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 2v4"/><path d="M12 18v4"/></svg>
+  <!-- Alt Bar (Birebir İkonik Navigasyon) -->
+  <nav class="bottom-navigation">
+    <button type="button" class="bottom-btn is-active" id="nav-virds" title="Virdlerim">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/></svg>
     </button>
-    <button class="icon-btn" id="btn-add" title="Yeni Ekle">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+    <button type="button" class="bottom-btn" id="nav-add" title="Yeni Ekle">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+    </button>
+    <button type="button" class="bottom-btn" id="nav-settings" title="Ayarlar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
   </nav>
 
   <!-- Edit/Add Dialog -->
   <dialog id="dlg-editor">
-    <div class="dialog-head"><h3 id="dlg-title">Vird Ekle</h3><button class="icon-btn" onclick="this.closest('dialog').close()">✕</button></div>
+    <div class="dialog-head">
+      <h3 id="dlg-title">Vird Ekle</h3>
+      <button class="icon-btn" onclick="this.closest('dialog').close()">✕</button>
+    </div>
     <form id="form-item">
       <input type="hidden" id="item-id" />
       <div class="form-group"><label>Başlık *</label><input type="text" id="item-title" required /></div>
       <div class="form-group"><label>Arapça Metin</label><textarea id="item-ar" rows="3" dir="rtl" style="font-family:var(--font-ar)"></textarea></div>
       <div class="form-group"><label>Türkçe Meali / Not</label><textarea id="item-tr" rows="2"></textarea></div>
       <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
-        <div><label>Kategori</label><select id="item-cat"><option value="zikir">Zikir</option><option value="dua">Dua</option><option value="salavat">Salavat</option></select></div>
-        <div><label>Hedef Adet (Boş=∞)</label><input type="number" id="item-target" min="1" placeholder="Sınırsız" /></div>
+        <div><label>Kategori</label><select id="item-cat"><option value="dhikr">Zikir</option><option value="prayer">Dua</option><option value="salavat">Salavat</option></select></div>
+        <div><label>Hedef Adet</label><input type="number" id="item-target" min="1" placeholder="Sınırsız (∞)" /></div>
       </div>
       <div class="btn-row">
         <button type="button" class="btn btn-danger" id="btn-delete-item" style="display:none; margin-right:auto;">Sil</button>
@@ -130,40 +354,52 @@
     </form>
   </dialog>
 
-  <!-- Settings Dialog -->
-  <dialog id="dlg-settings">
-    <div class="dialog-head"><h3>Ayarlar</h3><button class="icon-btn" onclick="this.closest('dialog').close()">✕</button></div>
-    <div class="form-group">
-      <label>Arapça Yazı Boyutu (<span id="val-fscale">1.0</span>x)</label>
-      <input type="range" id="set-fscale" min="0.8" max="1.6" step="0.05" />
-    </div>
-    <div class="form-group">
-      <label>Satır Yüksekliği (<span id="val-flh">1.8</span>)</label>
-      <input type="range" id="set-flh" min="1.4" max="2.6" step="0.1" />
-    </div>
-    <div class="form-group">
-      <label>Gün Sıfırlama Saati</label>
-      <input type="time" id="set-reset-time" value="00:00" />
-    </div>
-    <div class="btn-row"><button type="button" class="btn btn-primary" onclick="this.closest('dialog').close()">Tamam</button></div>
-  </dialog>
-
   <script>
-    // --- 1. CONFIG & STATE ---
-    const SB_URL = "https://placeholder-url.supabase.co"; // Supabase Project URL
-    const SB_KEY = "placeholder-anon-key";              // Supabase Anon Key
-    const ICONS = { dhikr: "📿", dua: "🤲", salavat: "📜" };
-    
+    // --- 1. FONTS & CONFIG ---
+    const FONTS = [
+      { id: "noto", name: "Noto Naskh Arabic", style: "Geleneksel · Nesih", family: "Noto Naskh Arabic" },
+      { id: "readex", name: "Readex Pro", style: "Modern · Yuvarlak", family: "Readex Pro" },
+      { id: "almarai", name: "Almarai", style: "Yumuşak · Minimal", family: "Almarai" },
+      { id: "amiri", name: "Amiri", style: "Klasik · Klasik Baskı", family: "Amiri" },
+      { id: "scheherazade", name: "Scheherazade New", style: "Akıcı · Geleneksel", family: "Scheherazade New" }
+    ];
+    const GLYPHS = { dhikr: "📿", prayer: "🤲", salavat: "📜" };
+
+    const DEFAULT_DATA = [
+      {
+        id: "hepsini-kapsayan-dua",
+        title: "Hepsini Kapsayan Dua",
+        arabic_text: "اَللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ خَيْرِ مَا سَأَلَكَ مِنْهُ نَبِيُّكَ مُحَمَّدٌ، صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَنَعُوذُ بِكَ مِنْ شَرِّ مَا اسْتَعَاذَ مِنْهُ نَبِيُّكَ مُحَمَّدٌ، صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَأَنْتَ الْمُسْتَعَانُ، وَعَلَيْكَ الْبَلَاغُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ",
+        translation: "Allahım! Peygamber’in Muhammed sallallahu aleyhi ve sellem’in senden dilediği hayırları ben de dilerim. Peygamber’in Muhammed sallallahu aleyhi ve sellem’in sana sığındığı şerlerden biz de sana sığınırız.",
+        category: "prayer",
+        target_count: null,
+        completed: false,
+        last_completed_date: ""
+      }
+    ];
+
     let state = {
-      virds: JSON.parse(localStorage.getItem("evrad_cache") || "[]"),
+      activeTab: "virds",
       catFilter: "all",
-      prefs: Object.assign({ fscale: 1.0, flh: 1.8, resetTime: "00:00" }, JSON.parse(localStorage.getItem("evrad_prefs") || "{}"))
+      virds: JSON.parse(localStorage.getItem("evrad_virds") || "null") || DEFAULT_DATA,
+      prefs: Object.assign({
+        fscale: 1.0,
+        flh: 1.8,
+        activeFontId: "noto",
+        showTranslations: true,
+        showDiacritics: true,
+        hapticEnabled: true,
+        resetTime: "00:00"
+      }, JSON.parse(localStorage.getItem("evrad_prefs") || "{}"))
     };
 
     function applyPrefs() {
       document.documentElement.style.setProperty("--f-scale", state.prefs.fscale);
       document.documentElement.style.setProperty("--f-lh", state.prefs.flh);
+      const font = FONTS.find(f => f.id === state.prefs.activeFontId) || FONTS[0];
+      document.documentElement.style.setProperty("--font-ar", `"${font.family}", Arial, sans-serif`);
       localStorage.setItem("evrad_prefs", JSON.stringify(state.prefs));
+      localStorage.setItem("evrad_virds", JSON.stringify(state.virds));
     }
     applyPrefs();
 
@@ -176,59 +412,57 @@
       return resetDate.toISOString().slice(0, 10);
     }
 
-    // --- 2. SUPABASE REST API ---
-    async function sbFetch(path, opts = {}) {
-      if (SB_URL.includes("placeholder")) return null;
-      try {
-        const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
-          ...opts,
-          headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=representation", ...(opts.headers || {}) }
-        });
-        return res.ok ? await res.json() : null;
-      } catch (e) { return null; }
+    function formatDiacritics(text) {
+      if (!text || state.prefs.showDiacritics) return text;
+      return text.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "");
     }
 
-    async function syncVirds() {
-      const data = await sbFetch("virdler?select=*&order=order_index.asc");
-      if (data && Array.isArray(data)) {
-        state.virds = data;
-        localStorage.setItem("evrad_cache", JSON.stringify(state.virds));
-        render();
-      }
-    }
-
-    // --- 3. RENDER ---
-    function render() {
+    // --- 2. RENDER FUNCTIONS ---
+    function renderCards() {
       const today = getTodayKey();
       const listEl = document.getElementById("card-list");
-      const filtered = state.catFilter === "all" ? state.virds : state.virds.filter(v => (v.category || "zikir") === state.catFilter);
+      const filtered = state.catFilter === "all" ? state.virds : state.virds.filter(v => (v.category || "dhikr") === state.catFilter);
 
       if (!filtered.length) {
-        listEl.innerHTML = `<div style="text-align:center; padding:3rem 1rem; color:var(--muted)">Henüz vird eklenmemiş.<br>Alttaki <b>+</b> butonuna dokunarak ekleyin.</div>`;
+        listEl.innerHTML = `<div style="text-align:center; padding:3.5rem 1rem; color:var(--muted)">Henüz vird bulunmuyor.<br>Alttaki <b>+</b> butonuna dokunarak ekleyebilirsiniz.</div>`;
         return;
       }
 
       listEl.innerHTML = filtered.map(v => {
         const isDone = v.completed && v.last_completed_date === today;
+        const arFormatted = formatDiacritics(v.arabic_text);
         return `
-          <article class="card ${isDone ? "is-done" : ""}" data-id="${v.id}" data-open="false">
-            <div class="card-row">
-              <div class="card-marker">${ICONS[v.category] || "📿"}</div>
-              <div class="card-body" onclick="toggleExpand('${v.id}')">
-                <div class="card-title">${v.title || "İsimsiz"}</div>
-                ${v.arabic_text ? `<div class="card-preview-ar">${v.arabic_text}</div>` : ""}
-              </div>
-              <button class="check-btn" onclick="toggleCheck('${v.id}')">
-                <span class="check-dot">${isDone ? "✓" : ""}</span>
+          <article class="trackable-card ${isDone ? "is-complete" : ""}" data-id="${v.id}" data-open="false">
+            <div class="card-top-badges">
+              <span class="card-badge-marker">${GLYPHS[v.category] || "📿"}</span>
+              <span class="target-chip">${v.target_count ? v.target_count : "∞"}</span>
+            </div>
+            <div class="card-collapsed-row">
+              <div style="width:2.75rem"></div>
+              <button type="button" class="card-main" onclick="toggleExpand('${v.id}')">
+                <h3 class="card-title">${v.title || "İsimsiz"}</h3>
+                ${arFormatted ? `<p class="card-preview-arabic">${arFormatted}</p>` : ""}
+              </button>
+              <button type="button" class="completion-light" onclick="toggleCheck('${v.id}')" aria-label="Tamamla">
+                <span class="completion-core">${isDone ? "✓" : ""}</span>
               </button>
             </div>
             <div class="card-details">
-              ${v.arabic_text ? `<div class="ar-block">${v.arabic_text}</div>` : ""}
-              ${v.translation ? `<div class="tr-block">${v.translation}</div>` : ""}
-              <div class="card-footer">
-                <span class="counter-badge">Hedef: ${v.target_count || "∞"}</span>
-                <button class="icon-btn" onclick="openEditor('${v.id}')" title="Düzenle">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+              ${arFormatted ? `
+                <div class="detail-block">
+                  <div class="detail-label">Arapça</div>
+                  <div class="arabic-text">${arFormatted}</div>
+                </div>
+              ` : ""}
+              ${(state.prefs.showTranslations && v.translation) ? `
+                <div class="detail-block">
+                  <div class="detail-label">Meal & Not</div>
+                  <div class="translation-text">${v.translation}</div>
+                </div>
+              ` : ""}
+              <div class="card-actions">
+                <button type="button" class="icon-btn" onclick="openEditor('${v.id}')" title="Düzenle">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                 </button>
               </div>
             </div>
@@ -237,23 +471,62 @@
       }).join("");
     }
 
-    // --- 4. INTERACTIONS ---
+    function renderSettings() {
+      document.getElementById("set-fscale").value = state.prefs.fscale;
+      document.getElementById("set-flh").value = state.prefs.flh;
+      document.getElementById("set-reset-time").value = state.prefs.resetTime;
+      document.getElementById("chk-translations").innerText = state.prefs.showTranslations ? "✓" : "";
+      document.getElementById("chk-translations").classList.toggle("is-checked", state.prefs.showTranslations);
+      document.getElementById("chk-diacritics").innerText = state.prefs.showDiacritics ? "✓" : "";
+      document.getElementById("chk-diacritics").classList.toggle("is-checked", state.prefs.showDiacritics);
+      document.getElementById("chk-haptic").innerText = state.prefs.hapticEnabled ? "✓" : "";
+      document.getElementById("chk-haptic").classList.toggle("is-checked", state.prefs.hapticEnabled);
+
+      const fontListEl = document.getElementById("font-list");
+      fontListEl.innerHTML = FONTS.map(f => {
+        const isSel = f.id === state.prefs.activeFontId;
+        return `
+          <button type="button" class="font-row-item ${isSel ? "is-selected" : ""}" onclick="selectFont('${f.id}')">
+            <div style="display:flex; flex-direction:column; gap:0.15rem;">
+              <span class="font-row-name">${f.name}</span>
+              <span class="font-row-style">${f.style}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.9rem;">
+              <span class="font-row-sample" style="font-family:'${f.family}'">الْحَمْدُ لِلَّهِ</span>
+              <span class="classic-checkbox-box ${isSel ? "is-checked" : ""}">${isSel ? "✓" : ""}</span>
+            </div>
+          </button>
+        `;
+      }).join("");
+    }
+
+    // --- 3. ACTIONS & INTERACTIONS ---
     window.toggleExpand = (id) => {
-      const card = document.querySelector(`article.card[data-id="${id}"]`);
-      if (card) card.setAttribute("data-open", card.getAttribute("data-open") === "true" ? "false" : "true");
+      const card = document.querySelector(`article.trackable-card[data-id="${id}"]`);
+      if (card) {
+        const isOpen = card.getAttribute("data-open") === "true";
+        card.setAttribute("data-open", isOpen ? "false" : "true");
+      }
     };
 
-    window.toggleCheck = async (id) => {
+    window.toggleCheck = (id) => {
       const today = getTodayKey();
       const vird = state.virds.find(v => v.id === id);
       if (!vird) return;
+      if (state.prefs.hapticEnabled && navigator.vibrate) navigator.vibrate(15);
       const isDone = vird.completed && vird.last_completed_date === today;
       vird.completed = !isDone;
       vird.last_completed_date = !isDone ? today : "";
       vird.updated_at = new Date().toISOString();
-      localStorage.setItem("evrad_cache", JSON.stringify(state.virds));
-      render();
-      await sbFetch(`virdler?id=eq.${id}`, { method: "PATCH", body: JSON.stringify({ completed: vird.completed, last_completed_date: vird.last_completed_date, updated_at: vird.updated_at }) });
+      applyPrefs();
+      renderCards();
+    };
+
+    window.selectFont = (id) => {
+      state.prefs.activeFontId = id;
+      applyPrefs();
+      renderSettings();
+      renderCards();
     };
 
     window.openEditor = (id) => {
@@ -261,16 +534,43 @@
       document.getElementById("dlg-title").innerText = vird ? "Virdi Düzenle" : "Yeni Vird Ekle";
       document.getElementById("item-id").value = vird ? vird.id : "";
       document.getElementById("item-title").value = vird ? vird.title : "";
-      document.getElementById("item-ar").value = vird ? vird.arabic_text || "" : "";
-      document.getElementById("item-tr").value = vird ? vird.translation || "" : "";
-      document.getElementById("item-cat").value = vird ? (vird.category || "zikir") : "zikir";
+      document.getElementById("item-ar").value = vird ? (vird.arabic_text || "") : "";
+      document.getElementById("item-tr").value = vird ? (vird.translation || "") : "";
+      document.getElementById("item-cat").value = vird ? (vird.category || "dhikr") : "dhikr";
       document.getElementById("item-target").value = (vird && vird.target_count) ? vird.target_count : "";
       document.getElementById("btn-delete-item").style.display = vird ? "block" : "none";
       document.getElementById("dlg-editor").showModal();
     };
 
-    // --- 5. FORM & SETTINGS EVENTS ---
-    document.getElementById("form-item").onsubmit = async (e) => {
+    // Navigation Switches
+    function setTab(tab) {
+      state.activeTab = tab;
+      document.getElementById("screen-virds").classList.toggle("is-visible", tab === "virds");
+      document.getElementById("screen-settings").classList.toggle("is-visible", tab === "settings");
+      document.getElementById("nav-virds").classList.toggle("is-active", tab === "virds");
+      document.getElementById("nav-settings").classList.toggle("is-active", tab === "settings");
+      if (tab === "settings") renderSettings();
+      else renderCards();
+    }
+    document.getElementById("nav-virds").onclick = () => setTab("virds");
+    document.getElementById("nav-settings").onclick = () => setTab("settings");
+    document.getElementById("nav-add").onclick = () => openEditor(null);
+
+    // Filter Toggle
+    document.getElementById("btn-toggle-filters").onclick = () => {
+      const wrap = document.getElementById("filter-dropdown");
+      wrap.style.display = wrap.style.display === "none" ? "block" : "none";
+    };
+    document.querySelectorAll(".cat-pill").forEach(btn => {
+      btn.onclick = () => {
+        state.catFilter = btn.dataset.cat;
+        document.querySelectorAll(".cat-pill").forEach(b => b.classList.toggle("is-active", b.dataset.cat === state.catFilter));
+        renderCards();
+      };
+    });
+
+    // Editor Form Submit / Delete
+    document.getElementById("form-item").onsubmit = (e) => {
       e.preventDefault();
       const id = document.getElementById("item-id").value || ("vird-" + Date.now());
       const item = {
@@ -286,83 +586,64 @@
       if (idx > -1) state.virds[idx] = { ...state.virds[idx], ...item };
       else { item.completed = false; item.last_completed_date = ""; state.virds.push(item); }
 
-      localStorage.setItem("evrad_cache", JSON.stringify(state.virds));
-      render();
+      applyPrefs();
+      renderCards();
       document.getElementById("dlg-editor").close();
-      await sbFetch("virdler", { method: "POST", headers: { "Prefer": "resolution=merge-duplicates" }, body: JSON.stringify(item) });
     };
 
-    document.getElementById("btn-delete-item").onclick = async () => {
+    document.getElementById("btn-delete-item").onclick = () => {
       const id = document.getElementById("item-id").value;
       if (!id || !confirm("Bu virdi silmek istediğinize emin misiniz?")) return;
       state.virds = state.virds.filter(v => v.id !== id);
-      localStorage.setItem("evrad_cache", JSON.stringify(state.virds));
-      render();
+      applyPrefs();
+      renderCards();
       document.getElementById("dlg-editor").close();
-      await sbFetch(`virdler?id=eq.${id}`, { method: "DELETE" });
     };
 
-    // Settings
-    document.getElementById("btn-settings").onclick = () => {
-      document.getElementById("set-fscale").value = state.prefs.fscale;
-      document.getElementById("val-fscale").innerText = state.prefs.fscale;
-      document.getElementById("set-flh").value = state.prefs.flh;
-      document.getElementById("val-flh").innerText = state.prefs.flh;
-      document.getElementById("set-reset-time").value = state.prefs.resetTime;
-      document.getElementById("dlg-settings").showModal();
-    };
-    document.getElementById("set-fscale").oninput = (e) => { state.prefs.fscale = Number(e.target.value); document.getElementById("val-fscale").innerText = e.target.value; applyPrefs(); };
-    document.getElementById("set-flh").oninput = (e) => { state.prefs.flh = Number(e.target.value); document.getElementById("val-flh").innerText = e.target.value; applyPrefs(); };
-    document.getElementById("set-reset-time").onchange = (e) => { state.prefs.resetTime = e.target.value || "00:00"; applyPrefs(); render(); };
+    // Settings Inputs
+    document.getElementById("set-fscale").oninput = (e) => { state.prefs.fscale = Number(e.target.value); applyPrefs(); };
+    document.getElementById("set-flh").oninput = (e) => { state.prefs.flh = Number(e.target.value); applyPrefs(); };
+    document.getElementById("set-reset-time").onchange = (e) => { state.prefs.resetTime = e.target.value || "00:00"; applyPrefs(); renderCards(); };
+    document.getElementById("row-show-translations").onclick = () => { state.prefs.showTranslations = !state.prefs.showTranslations; applyPrefs(); renderSettings(); renderCards(); };
+    document.getElementById("row-show-diacritics").onclick = () => { state.prefs.showDiacritics = !state.prefs.showDiacritics; applyPrefs(); renderSettings(); renderCards(); };
+    document.getElementById("row-haptic").onclick = () => { state.prefs.hapticEnabled = !state.prefs.hapticEnabled; applyPrefs(); renderSettings(); };
 
-    // Buttons & Filters
-    document.getElementById("btn-add").onclick = () => openEditor(null);
-    document.getElementById("btn-virds").onclick = () => { state.catFilter = "all"; updateCatPills(); render(); };
-    document.querySelectorAll(".cat-pill").forEach(btn => {
-      btn.onclick = () => { state.catFilter = btn.dataset.cat; updateCatPills(); render(); };
-    });
-    function updateCatPills() {
-      document.querySelectorAll(".cat-pill").forEach(b => b.classList.toggle("is-active", b.dataset.cat === state.catFilter));
-    }
-
-    // --- 6. MIGRATION FROM INDEXEDDB (ONE-TIME) ---
-    async function migrateFromIndexedDB() {
-      if (localStorage.getItem("migration_done")) return;
+    // --- 4. INDEXEDDB ONE-TIME MIGRATION ---
+    (function migrateOldData() {
+      if (localStorage.getItem("migration_done_v2")) return;
       try {
         const req = indexedDB.open("zikirlerim");
         req.onsuccess = () => {
           const db = req.result;
           if (!db.objectStoreNames.contains("dhikr")) return;
           const tx = db.transaction("dhikr", "readonly");
-          const store = tx.objectStore("dhikr");
-          const getAll = store.getAll();
+          const getAll = tx.objectStore("dhikr").getAll();
           getAll.onsuccess = () => {
-            const legacyItems = getAll.result || [];
-            if (legacyItems.length > 0 && state.virds.length === 0) {
-              state.virds = legacyItems.map((item, i) => ({
+            const list = getAll.result || [];
+            if (list.length > 0) {
+              state.virds = list.map((item, i) => ({
                 id: item.id || ("vird-" + i),
-                title: item.title || "İsimsiz",
-                arabic_text: item.arabicText || item.arabic_text || "",
+                title: item.name || item.title || "İsimsiz",
+                arabic_text: item.arabic || item.arabicText || item.arabic_text || "",
                 translation: item.translation || "",
-                category: item.category || "zikir",
+                category: item.category || "dhikr",
                 target_count: item.targetCount || item.target_count || null,
                 completed: false,
                 last_completed_date: "",
                 updated_at: new Date().toISOString()
               }));
-              localStorage.setItem("evrad_cache", JSON.stringify(state.virds));
-              render();
+              applyPrefs();
+              renderCards();
             }
-            localStorage.setItem("migration_done", "true");
+            localStorage.setItem("migration_done_v2", "true");
           };
         };
-      } catch (e) { localStorage.setItem("migration_done", "true"); }
-    }
+      } catch (e) { localStorage.setItem("migration_done_v2", "true"); }
+    })();
 
     // Init
-    migrateFromIndexedDB();
-    render();
-    syncVirds();
+    renderCards();
+    renderSettings();
   </script>
 </body>
 </html>
